@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+#exec nodemon --watch . --exec "python -v" ./listener "$@"
+#exec ./delta-cli.py run --auto-reload
+exec ./listener.py "$@"
