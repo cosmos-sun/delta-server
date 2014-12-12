@@ -379,7 +379,7 @@ class KeyValue(object):
         self.key = key
 
     def load(self):
-        return db.load(self.key).value
+        return db.load(self.key)
 
     def store(self, value):
         return db.set(self.key, value)

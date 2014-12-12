@@ -29,7 +29,7 @@ def generate_message(e):
     #msg=base64.b64encode(_msg[:cnt])
 
     msg = base64.b64encode(_msg)
-
+    #print type(e), len(msg)
     return msg
 
 

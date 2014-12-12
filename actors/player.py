@@ -3,11 +3,13 @@
 import traceback
 from pykka import ActorRegistry
 
-from actor_settings import *
+from actor_settings import TYPE_ERROR
 from base_actor import ParentActor
+from account import LinkAccount
 from game import Game
 from social import Social
 from store import ProductsListActor
+from base_actor import msg_map
 from models.player import Session
 
 from utils import log
@@ -32,16 +34,14 @@ class Player(ParentActor):
         self.game = None
 
     def on_receive(self, msg):
-        if msg['type'] == TYPE_GAME:
-            return self.call(Game, msg)
-        elif msg['type'] == TYPE_STORE:
-            return self.call(ProductsListActor, msg)
-        elif msg["type"] == TYPE_SOCIAL:
-            return self.call(Social, msg)
-        elif msg['type'] == TYPE_ERROR:
+        handler = msg_map.get(msg['func'])
+        if msg.get("type") == TYPE_ERROR:
+            # TODO - handle error.
             log.error(msg['actor'])
             log.error(msg['exception'])
             log.error(traceback.print_tb(msg['traceback']))
+        elif handler:
+            return self.call(handler, msg)
         else:
             return None
 

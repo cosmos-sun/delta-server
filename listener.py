@@ -10,7 +10,6 @@ from gevent.pywsgi import WSGIServer
 from bottle import Bottle, request, static_file
 
 from actors.player import get_player
-from actors.actor_settings import *
 from actors.account import get_account
 
 import settings
@@ -24,9 +23,8 @@ from utils import log
 app = Bottle()
 
 
-def build_message(t, request):
-    msg = {'type': t,
-           'func': request.forms.get('name'),
+def build_message(request):
+    msg = {'func': request.forms.get('name'),
            'msg': parse_message(request.forms.get('name'),
                                 request.forms.get('body'))}
     return msg
@@ -35,24 +33,23 @@ def build_message(t, request):
 def _test():
     return 'OK'
 
-@app.route('/%s/' % TYPE_ACCOUNT, method='POST')
+@app.route('/account/', method='POST')
 def _account():
-    msg = build_message(TYPE_ACCOUNT, request)
+    msg = build_message(request)
     account = get_account()
     resp = account.ask(msg)
     return resp
 
-@app.route('/player/<actor_type>/<session_id>/', method='POST')
-def _player(actor_type, session_id):
-    log.debug("actor_type:%s" % actor_type)
+@app.route('/player/<session_id>/', method='POST')
+def _player(session_id):
     player = get_player(session_id)
     if not player:
         return "You need sign in to continue."
-    msg = build_message(actor_type, request)
+    msg = build_message(request)
     return player.ask(msg)
 
 #asset bundle file server:file name template<filename.unity3d>
-@app.route('/%s/<pid>/:filename#.*.unity3d#/' % TYPE_ASSET)
+@app.route('/asset/<pid>/:filename#.*.unity3d#/')
 def _sendAssetBundle(pid, filename):
     #some path map
     log.debug('sending asset: ', settings.ASSET_BUNDLE_ROOT, filename)

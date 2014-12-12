@@ -32,7 +32,6 @@ def init_cb():
     global cb
     bucket = settings.COUCHBASE_BUCKET
     host = settings.COUCHBASE_HOST
-    print bucket, host
     log.debug("connecting to bucket '%s' on host '%s'", bucket, host)
     if bucket and host:
         while True:

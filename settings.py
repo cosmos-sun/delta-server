@@ -7,6 +7,6 @@ LISTEN_PORT = 8088
 
 COUCHBASE_BUCKET = os.getenv("COUCHBASE_BUCKET", "default")
 COUCHBASE_HOST = os.getenv("COUCHBASE_HOST",
-    os.getenv("COUCHBASE_PORT_8091_TCP_ADDR", "10.21.1.232"))
+    os.getenv("COUCHBASE_PORT_8091_TCP_ADDR", "54.84.206.50"))
 
 ASSET_BUNDLE_ROOT = os.getenv("ASSET_BUNDLE_ROOT", "/opt/assetbundle")  # must be absolute path

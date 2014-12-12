@@ -30,7 +30,8 @@ RUN pip install gevent pykka protobuf \
     bottle \
     dogpile dogpile.cache \
     dateutils
-RUN apt-get install M2Crypto
+
+RUN apt-get install M2Crypto ipython
 
 RUN pip install server-reloader docopt
 

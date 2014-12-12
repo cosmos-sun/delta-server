@@ -22,13 +22,11 @@ class Player(Base):
     agc_id = TextAttr()
     gc_id = TextAttr()
     facebook_id = LongAttr()
-    sso_account_id = LongAttr()
-    device_id = TextAttr()
+    device_id = TextAttr()  # Record the device create the player
     login_time = DateTimeAttr()
     xp = IntAttr()
     coins = IntAttr()
-    _index_attributes = ["agc_id", "gc_id", "facebook_id", "sso_account_id",
-                         "device_id"]
+    _index_attributes = ["agc_id", "gc_id", "facebook_id", "device_id"]
 
     achievements = ListAttr(TextAttr())
 
@@ -122,3 +120,16 @@ class Session(Base):
         db.touch(Session._get_index_key("player_id", self.player_id), ttl)
         return
 
+
+class DeviceLink(Base):
+    _oid_key = "device_id"
+    _index_attributes = ["player_id"]
+
+    device_id = TextAttr()
+    player_id = LongAttr()
+
+    def update_player_id(self, val):
+        # Delete from old player id list
+        self.delete()
+        self.player_id = val
+        self.store()

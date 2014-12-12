@@ -30,7 +30,7 @@ class World:
                     zone.CopyFrom(z)
             return cls.world
         else:
-            return models.content.world_proto
+            return models.content.GameRule.world_proto
 
     @classmethod
     def getCreatureTypes(cls):
@@ -47,7 +47,7 @@ class World:
                     c=cls.creatures.creatures.add()
                     c.CopyFrom(v)
             else:
-                ct=models.content.creature_types_proto
+                ct=models.content.GameRule.creature_types_proto
                 cls.creatures.creatures.extend(ct)
         return cls.creatures
 

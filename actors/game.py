@@ -5,11 +5,13 @@ from utils import protocol_pb2 as proto
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from models import content
+from models.content import GameRule
 from base_actor import ChildActor
 from configs.world import World
+from models.reward import BattleReward
 from models.creature import CreatureTeam
 from models.creature import CreatureInstance
+from models.creature import Egg
 from models.player import Player
 from utils.protocol_pb2 import AscendRep
 from utils.protocol_pb2 import AscendResultCode
@@ -31,7 +33,7 @@ class Game(ChildActor):
         return self.resp(World.getWorld())
 
         # change to use this when content is stable
-        #return self.resp(content.content.world)
+        #return self.resp(GameRule.content.world)
 
     def RetrieveCreatureType(self,msg):
         return self.resp(World.getCreatureTypes())
@@ -41,6 +43,8 @@ class Game(ChildActor):
         #rep.creatures.extend(content.content.creature_types)
         #return self.resp(rep)
 
+
+    def BattleBegin(self, msg):
         rep = proto.BattleBeginRep()
         if self.mockup:
             rep.DungeonId=100
@@ -50,10 +54,32 @@ class Game(ChildActor):
                 wave=rep.Waves.add()
                 wave.CopyFrom(w)
         else:
+            pid = self.parent.pid
             #TODO: 1. verify the requirment for zone, area, dungeon
-            #TODO: 2. random value for reward and store, waiting fo design
-            rep.reward = \
-                content.world[msg.zoneSlug][msg.areaSlug][msg.dungeonSlug].reward
+            print msg
+            dungeon = GameRule.dungeons[msg.dungeonSlug]
+            boss_dropped = False
+            last_boss = None
+            #TODO: if there is a reward already, how to deal with it
+            battle_reward = BattleReward(pid)
+            # add eggs into wave enemies
+            for wave in dungeon.waves:
+                # do we need to add wave drop into final reward
+                for enemy in wave.enemies:
+                    battle_reward.wave_egg(enemy, [])
+                if wave.boss and not boss_dropped:
+                    boss_dropped = True
+                    last_boss = wave.boss
+                    if not boss_dropped:
+                        battle_reward.wave_egg(wave.boss, [], boss=True)
+            # generate battle end reward
+            rep.xp = battle_reward.get_xp()
+            battle_reward.clear_egg(last_boss, [], rep)
+            battle_reward.speed_egg(last_boss, [], rep)
+            battle_reward.luck_egg(last_boss, [], pid, msg.leader_id, rep)
+            #TODO: replace [] with real dungeon.elements
+            battle_reward.save()
+
         return self.resp(rep)
 
     def BattleEnd(self, msg):
@@ -61,11 +87,14 @@ class Game(ChildActor):
         if self.mockup:
             rep.xp=msg.score/2
         else:
-            #TODO: give the reward to player
+            reward = BattleReward(player_id=self.parent.pid).load()
             if msg.win:
+                #TODO: give the reward to player
+                reward.pay(msg.speed)
                 pass
             else:
                 pass
+            reward.delete()
             rep.result_code = proto.ResultCode.Value('SUCCESS')
         return self.resp(rep)
 
@@ -308,3 +337,15 @@ class Game(ChildActor):
 
         resp.result_code = SellCreatureResultCode.Value("SOLD_SUCCESS")
         return self.resp(resp)
+
+    def GachaTrees(self, msg):
+        rep = proto.GachaTreesRep()
+        rep.tree_slugs.extend(GameRule.gacha_trees.keys())
+        return self.resp(rep)
+
+    def GachaShake(self, msg):
+        rep = proto.GachaShakeRep()
+        kind, data = GameRule.gacha(msg.tree_slug)
+        egg = Egg.create_proto_egg(kind, data)
+        rep.egg.CopyFrom(egg)
+        return self.resp(rep)

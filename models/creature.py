@@ -1,7 +1,7 @@
 from dal.base import *
 from utils.exception import CreatureDisabledAction
 from utils import protocol_pb2 as proto
-from models.content import creature_types
+from models.content import GameRule
 
 
 class CreatureInstance(Base):
@@ -30,7 +30,7 @@ class CreatureInstance(Base):
     def _save(self, slug, level=1, xp=0, plus_hp=0, plus_attack=0,
               plus_speed=0, plus_luck=0):
         slug = slug.lower()
-        creature_type = creature_types.get(slug)
+        creature_type = GameRule.creature_types.get(slug)
         self.slug = slug
         self.id = creature_type.displayID
         self.xp = xp
@@ -62,7 +62,9 @@ class CreatureInstance(Base):
         c = proto.CreatureInstance()
         c.cid = self.c_id
         c.slug = self.slug
-        c.id = self.id
+        #TODO: find out what dose this id using for
+        #c.id = self.id
+        c.id = self.c_id
         c.xp = self.xp
         c.level = self.level
         c.plusHP = self.plusHP
@@ -75,7 +77,7 @@ class CreatureInstance(Base):
         if not self._loaded:
             self.load()
             self._loaded = True
-            self._type = creature_types.get(self.slug)
+            self._type = GameRule.creature_types.get(self.slug)
 
     def sale_price(self):
         self._do_load()
@@ -209,7 +211,16 @@ class CreatureTeam(Base):
                 teams.append(team)
         return teams
 
+class Egg(object):
 
+    @classmethod
+    def create_proto_egg(cls, kind, value):
+        egg = proto.Egg()
+        #TODO: creature egg obj
+        egg.type = proto.EggType.Value(kind)
+        return egg
+
+#TODO: figure out how to deal with the class below
 class MaterialInfo(Base):
     _oid_key = "material_id"
 
