@@ -16,6 +16,14 @@ class Attr(object):
         return instance._data[self.name]
 
     def __set__(self, instance, value):
+        if instance.is_oid_key(self.name):
+            instance.record_old_oid()
+        elif instance.is_index_attr(self.name):
+            # remove data update
+            old_val = instance._data.get(self.name)
+            old_orig = instance._origin_data.get(self.name)
+            if old_orig is None and old_val is not None:
+                instance._origin_data[self.name] = old_val
         instance._data[self.name] = value
 
     def _load(self, instance, value):
@@ -222,6 +230,8 @@ class Base(object):
 
     def __init__(self, **kw):
         self._data = {}
+        self._origin_data = {}
+        self._origin_oid = None
         self.set_attr(**kw)
 
     def set_attr(self, **kw):
@@ -248,6 +258,17 @@ class Base(object):
     @parent_key.setter
     def parent_key(self, val):
         setattr(self, self._parent_key, val)
+
+    def is_index_attr(self, attr_name):
+        return attr_name in self._index_attributes
+
+    def is_oid_key(self, attr_val):
+        return attr_val == self._oid_key
+
+    def record_old_oid(self):
+        old_oid = self._data.get(self._oid_key)
+        if self._origin_oid is None and old_oid:
+            self._origin_oid = old_oid
 
     #@property
     #def owner_oid(self):
@@ -294,13 +315,32 @@ class Base(object):
         data = self._get_data()
         if data is not None:
             self.set_attr(**data)
-            self._data[self.__class__._oid_key] = data.get(self.__class__._oid_key)
+            oid_key = type(self)._oid_key
+            self.oid = data.get(oid_key)
             for attr_name, field in self._data_attrs.iteritems():
                 self._data[attr_name] = field._load(self, data.get(attr_name))
         return self
 
     def store(self):
         cls = type(self)
+        if self._origin_oid is not None:
+            # delete old data, remove from attr index list
+            kwargs = {self._oid_key: self._origin_oid}
+            if self._parent_key:
+                kwargs[self._parent_key] = self.parent_key
+            for attr_name in self._index_attributes:
+                kwargs[attr_name] = self._origin_data.get(
+                    attr_name, getattr(self, attr_name))
+            self._origin_data.clear()
+            old_inst = cls(**kwargs)
+            old_inst.delete()
+        elif self._origin_data:
+            # remove from old attr index list if index attr value changes.
+            for attr_name, old_val in self._origin_data.iteritems():
+                if old_val != getattr(self, attr_name):
+                    self.delete_from_index_attribute(attr_name, val=old_val)
+            self._origin_data.clear()
+
         json_data = {}
         for attr_name, field in self._data_attrs.iteritems():
             if self._data[attr_name] is None:
@@ -345,8 +385,21 @@ class Base(object):
             rep.append(obj)
         return rep
 
-    def delete(self):
+    def delete_from_index_attribute(self, attr_name, val=None):
         cls = type(self)
+        val = val or getattr(self, attr_name)
+        origin_val = cls._load_oids_by_attribute(attr_name, val)
+        if self.oid in origin_val:
+            origin_val.remove(self.oid)
+            index_key = cls._get_index_key(attr_name, val)
+            if origin_val:
+                cache.store(index_key, origin_val)
+                db.set(index_key, origin_val)
+            else:
+                cache.delete(index_key)
+                db.delete(index_key)
+
+    def delete(self):
 
         # delete refs Data
         #for attr_name, field in self._data_attrs.iteritems():
@@ -355,17 +408,7 @@ class Base(object):
 
         # delete from index attribute
         for attr_name in self._index_attributes:
-            val = getattr(self, attr_name)
-            origin_val = cls._load_oids_by_attribute(attr_name, val)
-            if self.oid in origin_val:
-                origin_val.remove(self.oid)
-                index_key = cls._get_index_key(attr_name, val)
-                if origin_val:
-                    cache.store(index_key, origin_val)
-                    db.set(index_key, origin_val)
-                else:
-                    cache.delete(index_key)
-                    db.delete(index_key)
+            self.delete_from_index_attribute(attr_name)
 
         # delete from cache & db
         key = self._get_key()

@@ -127,9 +127,3 @@ class DeviceLink(Base):
 
     device_id = TextAttr()
     player_id = LongAttr()
-
-    def update_player_id(self, val):
-        # Delete from old player id list
-        self.delete()
-        self.player_id = val
-        self.store()
