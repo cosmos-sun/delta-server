@@ -1,9 +1,12 @@
 import random
 from base_actor import ChildActor
+from base_actor import MessageHandlerWrapper
 from models.friend import Friend
 from models.player import Player
 from utils.misc import get_latest_login_players
 from utils.protocol_pb2 import FriendAction
+from utils.protocol_pb2 import GetFriendsInfoRep
+from utils.protocol_pb2 import GetFriendsInfoResultCode
 from utils.protocol_pb2 import GetHelperRep
 from utils.protocol_pb2 import GetHelperResultCode
 from utils.protocol_pb2 import ModifyFriendRep
@@ -14,11 +17,15 @@ from utils import log
 
 class Social(ChildActor):
 
+    @MessageHandlerWrapper(GetFriendsInfoRep, GetFriendsInfoResultCode.Value(
+        "GET_FRIEND_INFO_INVALID_SESSION"))
     def GetFriendsInfo(self, msg):
         friend = Friend(self.parent.pid)
         resp = friend.get_friends_info()
         return self.resp(resp)
 
+    @MessageHandlerWrapper(ModifyFriendRep, ModifyFriendResultCode.Value(
+        "MODIFY_FRIEND_INVALID_SESSION"))
     def ModifyFriend(self, msg):
         resp = ModifyFriendRep()
         resp.action = msg.action
@@ -46,6 +53,8 @@ class Social(ChildActor):
             resp.result_code = func(msg.player_id)
         return self.resp(resp)
 
+    @MessageHandlerWrapper(GetHelperRep, GetHelperResultCode.Value(
+        "GET_HELPER_INVALID_SESSION"))
     def GetHelper(self, msg):
         # TODO - Design & move factor & helper num to config
         FAVORITE_FACTOR = 4
@@ -61,15 +70,18 @@ class Social(ChildActor):
         # TODO - Design: filter normal_p
         players = (list(normal_p) + list(normal_f) * FRIEND_FACTOR +
                    list(favorites) * FAVORITE_FACTOR)
-        helper_ids = set(range(HELPER_NUM))  # TODO - use: helper_ids = set()
-        while len(helper_ids) < HELPER_NUM:
-            _ids = random.sample(players, HELPER_NUM - len(helper_ids))
-            helper_ids.update(_ids)
+        _players = set(players)
+        if len(_players) <= HELPER_NUM:
+            helper_ids = _players
+        else:
+            helper_ids = set()
+            while len(helper_ids) < HELPER_NUM:
+                _ids = random.sample(players, HELPER_NUM - len(helper_ids))
+                helper_ids.update(_ids)
         rep = GetHelperRep()
         helpers = []
         for pid in helper_ids:
             h = Helper()
-            pid = player_id  # TODO - mockup here, use the real player id
             player = Player(id=pid).load()
             player.set_info(h.player_info, simple_mode=True)
             h.creature.CopyFrom(player.get_help_creature().to_proto_class())

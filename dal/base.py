@@ -1,8 +1,11 @@
-from dal import cache
+from dal import delete_data
+from dal import load_data
+from dal import store_data
 from dal.db import db
 import cPickle as pickle
 import dateutil.parser
 from utils.exception import ModelParentKeyMissingValue
+
 
 
 class Attr(object):
@@ -303,10 +306,7 @@ class Base(object):
 
     def _get_data(self):
         key = self._get_key()
-        data = cache.load(key)
-        if not data:
-            data = db.load(key)
-        return data
+        return load_data(key)
 
     def exist(self):
         return self._get_data() is not None
@@ -323,7 +323,7 @@ class Base(object):
 
     def store(self):
         cls = type(self)
-        if self._origin_oid is not None:
+        if self._origin_oid is not None and self._origin_oid != self.oid:
             # delete old data, remove from attr index list
             kwargs = {self._oid_key: self._origin_oid}
             if self._parent_key:
@@ -347,8 +347,7 @@ class Base(object):
                 continue
             json_data[attr_name] = field._store(self, self._data[attr_name])
         key = self._get_key()
-        cache.store(key, json_data)
-        db.set(key, json_data)
+        store_data(key, json_data)
 
         # save for query by attribute & value
         for attr_name in self._index_attributes:
@@ -360,15 +359,12 @@ class Base(object):
                 continue
             origin_val.append(self.oid)
             index_key = cls._get_index_key(attr_name, val)
-            cache.store(index_key, origin_val)
-            db.set(index_key, origin_val)
+            store_data(index_key, origin_val)
 
     @classmethod
     def _load_oids_by_attribute(cls, attribute, val):
         key = cls._get_index_key(attribute, val)
-        oid_list = cache.load(key)
-        if not oid_list:
-            oid_list = db.load(key)
+        oid_list = load_data(key)
         return oid_list or []
 
     @classmethod
@@ -393,11 +389,9 @@ class Base(object):
             origin_val.remove(self.oid)
             index_key = cls._get_index_key(attr_name, val)
             if origin_val:
-                cache.store(index_key, origin_val)
-                db.set(index_key, origin_val)
+                store_data(index_key, origin_val)
             else:
-                cache.delete(index_key)
-                db.delete(index_key)
+                delete_data(index_key)
 
     def delete(self):
 
@@ -412,8 +406,7 @@ class Base(object):
 
         # delete from cache & db
         key = self._get_key()
-        cache.delete(key)
-        db.delete(key)
+        delete_data(key)
 
 
 class KeyValue(object):

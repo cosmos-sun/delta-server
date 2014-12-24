@@ -9,12 +9,26 @@ cb = None
 
 
 class GConnectionExtention(Connection):
+    
+    def get_with_retry(self, key):
+        """
+        Like GConnect.get() but retries on temporary errors.
+        """
+        while True:
+            try:
+                val = self.get(key)
+                return val
+            except TemporaryFailError, e:
+                log.warning("TemporaryFailError: can't get key '%s' - "
+                            "retry in 2 secs...", key)
+            time.sleep(2)
+            continue
 
     def load(self, key):
         """
         Call GConnection simple get and return its value.
         """
-        val = self.get(key)
+        val = self.get_with_retry(key)
         return val and val.value
 
     def exist(self, key):
@@ -24,7 +38,7 @@ class GConnectionExtention(Connection):
             None - key does not exist
             Otherwise - key exist
         """
-        val = self.get(key).value
+        val = self.get_with_retry(key).value
         return val is not None
 
 

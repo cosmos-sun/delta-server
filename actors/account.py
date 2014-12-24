@@ -1,7 +1,9 @@
 #!/usr/bin/python
+from datetime import datetime
 from pykka import ActorRegistry
-from base_actor import ParentActor
 from base_actor import ChildActor
+from base_actor import ParentActor
+from base_actor import MessageHandlerWrapper
 from utils import log
 from utils.protocol_pb2 import LinkAccountRep
 from utils.protocol_pb2 import LinkAccountResultCode
@@ -130,33 +132,38 @@ class BaseLogin(BaseAuth):
     """
 
     def update_old_device_id(self, msg):
-        device = DeviceLink(device_id=msg.pre_device_id)
-        if device.exist():
-            device.load()
-            device.device_id = msg.device_id
-            device.store()
+        if msg.pre_device_id:
+            device = DeviceLink(device_id=msg.pre_device_id)
+            if device.exist():
+                device.load()
+                device.device_id = msg.device_id
+                device.store()
+                log.info("Device %s updated to %s" %
+                         (msg.pre_device_id, msg.device_id))
 
     def update_device_player_id(self, device_id, player_id):
         device = DeviceLink(device_id=device_id)
         device.load()
+        log.info("Will redirect device(%s) from player(%s) to player(%s)" %
+                 (device_id, device.player_id, player_id))
         device.player_id = player_id
         device.store()
 
     def init_device_link(self, device_id, player_id):
         device = DeviceLink(device_id=device_id, player_id=player_id)
+        log.info("Device(%s) playing player(%s)" % (device_id, player_id))
         device.store()
 
     def handle_login(self, msg):
         resp = LoginAccountRep()
         # update previous device_id to new device_id
-        if msg.pre_device_id:
-            self.update_old_device_id(msg)
+        self.update_old_device_id(msg)
 
         device_player = self.get_player_by_device(msg.device_id)
         if msg.pip_id:
             pip_player = self.get_player_by_pip(msg.pip_id)
-            if device_player.exist():
-                if pip_player.exist():
+            if device_player and device_player.exist():
+                if pip_player and pip_player.exist():
                     player = pip_player
                     if device_player.id != player.id:
                         # device not match pip player
@@ -167,7 +174,7 @@ class BaseLogin(BaseAuth):
                     player = self.init_player(msg)
                     self.update_device_player_id(msg.device_id, player.id)
             else:
-                if pip_player.exist():
+                if pip_player and pip_player.exist():
                     player = pip_player
                 else:
                     # create new account
@@ -176,11 +183,13 @@ class BaseLogin(BaseAuth):
             self.generate_session(player.id)
         else:
             player = device_player
-            if not player.exist():
+            if not (player and player.exist()):
                 # create new account
                 player = self.init_player(msg)
                 self.init_device_link(msg.device_id, player.id)
 
+        player.login_time = datetime.now()
+        player.store()
         session = self.generate_session(player.id)
         update_latest_login_players(player.id)
         resp.session_id = session.id
@@ -210,24 +219,29 @@ class BaseLinkAccount(BaseAuth):
     def handle_link(self, player_id, msg):
         device_player = self.get_player_by_device(msg.device_id)
         if device_player is None:
-            return LinkAccountResultCode.Value("LINK_ACC_DEVICE_ID_NOT_EXIST")
+            # LINK_ACC_DEVICE_ID_NOT_EXIST
+            return LinkAccountResultCode.Value("LINK_ACC_OTHER")
         if device_player.id != player_id:
-            return LinkAccountResultCode.Value("LINK_ACC_PLAYER_NOT_MATCH")
+            # LINK_ACC_PLAYER_NOT_MATCH
+            return LinkAccountResultCode.Value("LINK_ACC_OTHER")
 
         player = self.get_player_by_pip(msg.pip_id)
         if player:
             if player.id == device_player.id:
-                return LinkAccountResultCode.Value("LINK_ACC_ALREADY_LINKED")
+                # LINK_ACC_ALREADY_LINKED
+                return LinkAccountResultCode.Value("LINK_ACC_OTHER")
             else:
                 return LinkAccountResultCode.Value("LINK_ACC_DIFFERENT_PIP")
         elif getattr(device_player, self.player_index):
-            return LinkAccountResultCode.Value(
-                "LINK_ACC_DEVICE_LINKED_TO_OTHER_PIP")
+            # LINK_ACC_DIFFERENT_PIP_NEW_PIP
+            return LinkAccountResultCode.Value("LINK_ACC_DIFFERENT_PIP")
         else:
-            # Do link
+            # Do link -> LINK_ACC_SUCCESS
             setattr(device_player, self.player_index, msg.pip_id)
             device_player.store()
-            return LinkAccountResultCode.Value("LINK_ACC_SUCCESS")
+            log.info("Link %s(%s) to player(id:%s)" %
+                     (self.player_index, msg.pip_id, device_player.id))
+            return LinkAccountResultCode.Value("LINK_ACC_OTHER")
 
 
 class BaseAGC(BaseAuth):
@@ -377,21 +391,14 @@ class LinkAccount(ChildActor):
                     SignType.Value("FACEBOOK"): LinkFacebook(),
                     }
 
+    @MessageHandlerWrapper(LinkAccountRep, LinkAccountResultCode.Value(
+        "LINK_ACC_OTHER"))
     def LinkAccount(self, msg):
         log.info("Link account receive %s" % msg)
         resp = LinkAccountRep()
         link_handler = self.link_acc_map.get(msg.type)
-        if link_handler:
-            if msg.device_id:
-                resp.result_code = link_handler.handle_link(self.parent.pid,
-                                                            msg)
-            else:
-                resp.result_code = LinkAccountResultCode.Value(
-                    "LOGIN_ACC_MISSING_DEVICE_ID")
-        elif msg.type in SignType.values():
-            resp.result_code = LinkAccountResultCode.Value(
-                "LINK_ACC_DISABLED_SIGN_TYPE")
+        if link_handler and msg.device_id:
+            resp.result_code = link_handler.handle_link(self.parent.pid, msg)
         else:
-            resp.result_code = LinkAccountResultCode.Value(
-                "LINK_ACC_MISSING_SIGN_TYPE")
+            resp.result_code = LinkAccountResultCode.Value("LINK_ACC_OTHER")
         return self.resp(resp)

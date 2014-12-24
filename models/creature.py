@@ -1,6 +1,8 @@
+import math
+import random
 from dal.base import *
 from utils.exception import CreatureDisabledAction
-from utils import protocol_pb2 as proto
+from utils.protocol_pb2 import CreatureInstance as CreatureProto
 from models.content import GameRule
 
 
@@ -32,7 +34,6 @@ class CreatureInstance(Base):
         slug = slug.lower()
         creature_type = GameRule.creature_types.get(slug)
         self.slug = slug
-        self.id = creature_type.displayID
         self.xp = xp
         self.level = level
         self.plusHP = plus_hp
@@ -51,6 +52,9 @@ class CreatureInstance(Base):
         self._save(new_slug, plus_hp=self.plusHP, plus_attack=self.plusAttack,
                    plus_speed=self.plusSpeed, plus_luck=self.plusLuck)
 
+    def info(self):
+        return self._data
+
     @classmethod
     def get_all_by_player(cls, pid):
         rep = []
@@ -59,12 +63,9 @@ class CreatureInstance(Base):
         return rep
 
     def to_proto_class(self):
-        c = proto.CreatureInstance()
+        c = CreatureProto()
         c.cid = self.c_id
         c.slug = self.slug
-        #TODO: find out what dose this id using for
-        #c.id = self.id
-        c.id = self.c_id
         c.xp = self.xp
         c.level = self.level
         c.plusHP = self.plusHP
@@ -79,18 +80,39 @@ class CreatureInstance(Base):
             self._loaded = True
             self._type = GameRule.creature_types.get(self.slug)
 
+    @property
+    def element(self):
+        self._do_load()
+        return self._type.element
+
     def sale_price(self):
         self._do_load()
-        # TODO - Design
-        return self.level * 500
+        star = self._type.starRating
+        params = GameRule.configs.get("sellingParams")
+        param_a = params.get("paramA", 2.42)
+        param_b = params.get("paramB", 100)
+        param_c = params.get("paramC", 100)
+        price = round(math.pow(star, param_a)) * param_b + self.level * param_c
+        return int(price)
 
     def fuse_currency(self):
-        # TODO - Design
-        return 300
+        self._do_load()
+        star = self._type.starRating
+        params = GameRule.configs.get("fusingParams")
+        param_a = params.get("softCurrencyCostParamA", 1500)
+        param_b = params.get("softCurrencyCostParamB", 1)
+        param_c = params.get("softCurrencyCostParamC", 100)
+        return int(star * param_a + (self.level - param_b) * param_c)
+
+    def _get_evolve_config(self):
+        self._do_load()
+        star = self._type.starRating
+        evolve_config = GameRule.evolve_config.get(star)
+        return evolve_config
 
     def evolve_currency(self):
-        # TODO - Design
-        return 300
+        evolve_config = self._get_evolve_config()
+        return evolve_config.get("softCurrency")
 
     def ascend_currency(self):
         # TODO - Design
@@ -100,33 +122,121 @@ class CreatureInstance(Base):
         self._do_load()
         return self.level == self._type.maxLevel
 
-    def fuse_trans_xp(self):
+    def is_same_element(self, other):
+        if isinstance(other, str):
+            # handle slug
+            c_type = GameRule.creature_types.get(other)
+            return self.element == c_type.element
+        else:
+            # handle CreatureInstance
+            return self.element == other.element
+
+    def is_same_series(self, other):
+        slug = isinstance(other, str) and other or other.slug
+        series = GameRule.creature_series.get(self.slug)
+        return slug in series
+
+    def fuse_mega_odds(self, same_ele_num, feeders_num):
+        self._do_load()
+        params = GameRule.configs.get("fusingParams")
+        param_a = params.get("megaFusionChanceParamA")
+        param_b = params.get("megaFusionChanceParamB")
+        odds_mego = param_a * same_ele_num / feeders_num + param_b
+        if random.random() <= odds_mego:
+            return True
+        return False
+
+    def fuse_trans_xp(self, eater):
         """
         Transform creature to xp to fuse others.
         """
         self._do_load()
-        # TODO - Design
-        return self.level * 500
+        star = self._type.starRating
+        params = GameRule.configs.get("fusingParams")
+        param_a = params.get("xpGainParamA", 300)
+        param_b = params.get("xpGainParamB", 120)
+        param_c = params.get("xpGainParamC", 1)
+        if self.is_same_element(eater):
+            param_c += params.get("xpGainParamD", 0.25)
+        return int((star * param_a + star * self.level * param_b) * param_c)
+
+    def fuse_plus_hp(self, eater):
+        self._do_load()
+        if self.plusHP:
+            params = GameRule.configs.get("fusingParams")
+            param_a = params.get("plusHPInheritParamA", 0.25)
+            param_b = params.get("plusHPInheritParamB", 2)
+            if self.is_same_element(eater):
+                param_b += 1
+            return param_a * param_b * self.plusHP
+        return 0
+
+    def fuse_plus_attack(self, eater):
+        self._do_load()
+        if self.plusAttack:
+            params = GameRule.configs.get("fusingParams")
+            param_a = params.get("plusAtkInheritParamA", 0.25)
+            param_b = params.get("plusAtkInheritParamB", 2)
+            if self.is_same_element(eater):
+                param_b += 1
+            return param_a * param_b * self.plusAttack
+        return 0
+
+    def fuse_plus_speed(self, eater):
+        self._do_load()
+        if self.plusSpeed:
+            params = GameRule.configs.get("fusingParams")
+            param_a = params.get("plusSpdInheritParamA", 0.25)
+            param_b = params.get("plusSpdInheritParamB", 2)
+            if self.is_same_element(eater):
+                param_b += 1
+            return param_a * param_b * self.plusSpeed
+        return 0
+
+    def fuse_plus_luck(self, eater):
+        self._do_load()
+        if self.plusLuck:
+            params = GameRule.configs.get("fusingParams")
+            param_a = params.get("plusLuckInheritParamA", 1)
+            param_b = params.get("plusLuckInheritParamB", 0)
+            if self.is_same_series(eater):
+                param_b += 1
+            return param_a * param_b * self.plusLuck
+        return 0
+
+    def _level_up_xp(self):
+        self._do_load()
+        max_l = self._type.maxLevel
+        params = GameRule.configs.get("creatureLevelParams")
+        l_exponent = params.get("levelExponent", 1.45)
+        l_scale = params.get("levelScale", 4.75)
+        star_scale = params.get("starRankScale", 1)
+        xp_incr = params.get("xpIncrementPerLevel", 300)
+        return int(l_scale * max_l * star_scale *
+                   math.pow(self.level, l_exponent) + xp_incr * self.level)
 
     def level_up(self, xp):
         self._do_load()
         self.xp += xp
-        # TODO - Design: get level up XP
         next_level = self.level + 1
-        while self.xp > next_level * 100 and next_level <= self._type.maxLevel:
+        level_up_xp = self._level_up_xp()
+        while self.xp > level_up_xp and next_level <= self._type.maxLevel:
+            self.xp -= level_up_xp
             self.level = next_level
-            self.xp -= next_level * 100
+            level_up_xp = self._level_up_xp()
             next_level += 1
-        self.store()
 
     def support_evolve(self):
         self._do_load()
         return bool(self._type.evolutionSlug)
 
     def evolution_materials(self):
-        self._do_load()
-        # TODO - Design
-        return {"coins": 5}
+        evolve_config = self._get_evolve_config()
+        materials = evolve_config.get("non_element")
+        ele_ms = evolve_config.get(self._type.element)
+        if ele_ms:
+            materials.update(ele_ms)
+        return materials
 
     def evolve(self):
         self._do_load()
@@ -210,15 +320,6 @@ class CreatureTeam(Base):
             if team:
                 teams.append(team)
         return teams
-
-class Egg(object):
-
-    @classmethod
-    def create_proto_egg(cls, kind, value):
-        egg = proto.Egg()
-        #TODO: creature egg obj
-        egg.type = proto.EggType.Value(kind)
-        return egg
 
 #TODO: figure out how to deal with the class below
 class MaterialInfo(Base):

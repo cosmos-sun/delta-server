@@ -1,4 +1,4 @@
-import re, urllib, urllib2, csv, glob, json
+import re, urllib, urllib2, csv, glob
 
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -30,18 +30,18 @@ class NaviSheet(object):
             ds = DataSheet(r[0], r[1], r[2])
             ds.download(self.client)
 
-
     def extract(self):
         fs = glob.glob(file_path)
         content = Content(version_id=OID)
         for f in fs:
             cls = f.split('/')[-1].split('.')[0]
             if cls == 'Navi': continue
-            if cls == "World":
-                data = open(f).read()
-                content.world = data
-            elif cls == "CreatureType":
+            if cls == "Configs":
                 data = open(f).readlines()
+                content.world = data[0]
+                content.configs = data[1]
+            elif cls == "CreatureType":
+                data = [line.rstrip() for line in open(f).readlines()]
                 content.creature_types = data
         content.store()
 

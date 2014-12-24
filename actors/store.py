@@ -1,4 +1,5 @@
 from base_actor import ChildActor
+from base_actor import MessageHandlerWrapper
 from utils.protocol_pb2 import GET_PRODUCTS_CODE
 from utils.protocol_pb2 import OS_TYPE
 from utils.protocol_pb2 import PURCHASE_RESULT_CODE
@@ -11,12 +12,15 @@ from actors.transaction import IAPTransaction
 
 from utils import log
 
+
 class ProductsListActor(ChildActor):
     purchase_handle_map = {
         OS_TYPE.Value("IOS"): IAPTransaction(),
         OS_TYPE.Value("Android"): IABTransaction(),
     }
 
+    @MessageHandlerWrapper(ProductsResp, GET_PRODUCTS_CODE.Value(
+        "GET_PRODUCTS_INVALID_SESSION"))
     def ProductsReq(self, msg):
         user_id = self.parent.pid
         resp = ProductsResp()
@@ -47,6 +51,8 @@ class ProductsListActor(ChildActor):
             resp.result_code = GET_PRODUCTS_CODE.Value("INVALID_PLAYER_ID")
         self.resp(resp)
 
+    @MessageHandlerWrapper(PurchaseResp, PURCHASE_RESULT_CODE.Value(
+        "PURCHASE_INVALID_SESSION"))
     def PurchaseReq(self, msg):
         resp = PurchaseResp()
         user_id = self.parent.pid

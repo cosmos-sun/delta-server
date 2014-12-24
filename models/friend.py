@@ -1,5 +1,6 @@
 from dal.base import *
 from models.player import Player
+from models.content import GameRule
 from utils.exception import UnsupportedFriendAction
 from utils.protocol_pb2 import FriendInfo
 from utils.protocol_pb2 import GetFriendsInfoRep
@@ -111,6 +112,18 @@ class Friend(object):
         self.other_receive_list = ReceivePendingList(player_id=friend_id)
         self.other_favorite_list = FavoriteList(player_id=friend_id)
 
+
+    def check_limit(self, friend_id):
+        # check if the self already reach the max friend number
+        self_player = Player(id=self.player_id).load()
+        if len(self.friend_list) >= GameRule.player_level.get(self_player.level, 0)['maxFriends']:
+            return ModifyFriendResultCode.Value("SELF_REACH_LIMIT")
+        # check if the opponent already reach the max friend number
+        friend = Player(id=friend_id).load()
+        if len(self.other_friend_list) >= GameRule.player_level.get(friend.level, 0)['maxFriends']:
+            return ModifyFriendResultCode.Value("OPP_REACH_LIMIT")
+        return None
+
     def add_friend(self, friend_id):
         self.init_other_list(friend_id)
         # check if player already have this friend
@@ -118,6 +131,9 @@ class Friend(object):
             return ModifyFriendResultCode.Value("FRIEND_FRIEND")
         if self.receive_list.in_list(friend_id):
             return ModifyFriendResultCode.Value("FRIEND_RECEIVING")
+        # check if reach the limits
+        code = self.check_limit(friend_id)
+        if code: return code
         # add player to friend's receive pending list
         self.other_receive_list.add_to_list(self.player_id)
         # add friend to player's send pending list
@@ -132,6 +148,9 @@ class Friend(object):
         if not self.receive_list.in_list(friend_id):
             return ModifyFriendResultCode.Value("ACCEPT_NOT_RECEIVING")
 
+        # check if reach the limits
+        code = self.check_limit(friend_id)
+        if code: return code
         # remove from other's send pending
         self.other_send_list.remove_from_list(self.player_id)
         # add friend to each other's friend list

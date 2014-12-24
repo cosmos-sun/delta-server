@@ -10,11 +10,8 @@ from actor_settings import *
 from utils import log
 
 
-class BaseMessage():
-    def __init__(self, t, msg):
-        self.type = t
-        self.msg = msg
-
+msg_map = {}
+INVALID_SESSION_PID = -1
 
 #class BaseActor(pykka.ThreadingActor):
 class BaseActor(GeventActor):
@@ -31,7 +28,6 @@ class BaseActor(GeventActor):
         return generate_message(msg)
 
 
-msg_map = {}
 class ActorMeta(type):
     base_func = dir(BaseActor)
 
@@ -73,3 +69,20 @@ class ChildActor(BaseActor):
         self.parent.actor_ref.tell({'type': TYPE_ERROR, 'actor': self, 'exception': exception_value, 'traceback': traceback})
 
 
+class MessageHandlerWrapper(object):
+    resp_msg = None
+    invalid_session_code = None
+
+    def __init__(self, resp_msg, invalid_session_code):
+        self.resp_msg = resp_msg
+        self.invalid_session_code = invalid_session_code
+
+    def __call__(self, method):
+        def handler_wrapper(instance, *args, **kwargs):
+            if instance.parent.pid == INVALID_SESSION_PID:
+                resp = self.resp_msg()
+                resp.result_code = self.invalid_session_code
+                return instance.resp(resp)
+            else:
+                return method(instance, *args, **kwargs)
+        return handler_wrapper
