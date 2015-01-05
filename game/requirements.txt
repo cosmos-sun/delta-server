@@ -1,0 +1,11 @@
+gevent
+couchbase
+bottle
+bottle-couchbase
+pykka
+protobuf
+dogpile
+dogpile.cache
+python-dateutils
+M2Crypto
+pyzmq
