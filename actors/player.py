@@ -1,9 +1,7 @@
 #!/usr/bin/python
 
-import traceback
 from pykka import ActorRegistry
 
-from actor_settings import TYPE_ERROR
 from base_actor import INVALID_SESSION_PID
 from base_actor import ParentActor
 from account import LinkAccount
@@ -40,12 +38,7 @@ class Player(ParentActor):
 
     def on_receive(self, msg):
         handler = msg_map.get(msg['func'])
-        if msg.get("type") == TYPE_ERROR:
-            # TODO - handle error.
-            log.error(msg['actor'])
-            log.error(msg['exception'])
-            log.error(traceback.print_tb(msg['traceback']))
-        elif handler:
+        if handler:
             return self.call(handler, msg)
         else:
             return None
@@ -55,12 +48,13 @@ class Player(ParentActor):
             c = cls.start(self)
             return c.ask(msg)
         except Exception, e:
-            log.error(e)
+            log.error(e, exc_info=True)
             return None
 
     @property
     def player(self):
         if self._player is None:
-            player = PlayerModel(id=self.pid).load()
+            player = PlayerModel(id=self.pid)
             self._player = player
+        self._player.load()
         return self._player

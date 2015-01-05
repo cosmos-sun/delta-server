@@ -11,13 +11,11 @@ from bottle import Bottle, request, static_file
 
 from actors.player import get_player
 from actors.account import get_account
-
-import settings
-
-from utils.misc import parse_message
 from content import content
-
+from script.sample_players import create_sample_players
 from utils import log
+from utils import settings
+from utils.misc import parse_message
 
 
 app = Bottle()
@@ -76,6 +74,7 @@ def prepare():
 if __name__ == '__main__':
     # ALTERNATIVES: use nodemon (nodejs app) or Bottle's auto-reload
     #prepare()
+    create_sample_players()
     import server_reloader
     def hook(): log.warning("reloading code")
     server_reloader.main(run_server, before_reload=hook)

@@ -10,13 +10,17 @@ from base_actor import ChildActor
 from base_actor import MessageHandlerWrapper
 from configs.world import World
 from models.reward import BattleReward
+from models.content import GameRule
 from models.creature import CreatureTeam
 from models.creature import CreatureInstance
-from models.player import Player
 from utils.protocol_pb2 import AddEnergyRep
 from utils.protocol_pb2 import AddEnergyResultCode
 from utils.protocol_pb2 import AscendRep
 from utils.protocol_pb2 import AscendResultCode
+from utils.protocol_pb2 import BuyCreatureSpaceRep
+from utils.protocol_pb2 import BuyCreatureSpaceResultCode
+from utils.protocol_pb2 import ConvertMaterialRep
+from utils.protocol_pb2 import ConvertMaterialResultCode
 from utils.protocol_pb2 import EvolveRep
 from utils.protocol_pb2 import EvolveResultCode
 from utils.protocol_pb2 import FuseRep
@@ -69,36 +73,46 @@ class Game(ChildActor):
             pid = self.parent.pid
             player = self.parent.player
             dungeon = GameRule.dungeons[msg.dungeonSlug]
-            success = player.spend_energy(dungeon.requirement.energy)
-            if not success:
+            if player.get_energy() < dungeon['requirement']['energy']:
                 rep.result_code = proto.BattleBeginRepResultCode.Value('BATTLE_BEGIN_FAIL_ENERGY')
                 return self.resp(rep)
-            #TODO: verify the requirement for zone, area
-            if player.progress < dungeon.requirement.progress:
+            if player.progress < dungeon['requirement']['progress']:
                 rep.result_code = proto.BattleBeginRepResultCode.Value('BATTLE_BEGIN_FAIL_PROGRESS')
                 return self.resp(rep)
-            boss_dropped = False
-            last_boss = None
+            last_boss = []
             #if there is a reward already, overwrite it
             battle_reward = BattleReward(player_id=pid)
-            battle_reward.progress = dungeon.reward.progress
-            # add eggs into wave enemies
-            for wave in dungeon.waves:
-                #do we need to add wave drop into final reward
-                for enemy in wave.enemies:
-                    battle_reward.wave_egg(enemy, rep)
-                if wave.boss and wave.boss.slug != "" and not boss_dropped:
-                    boss_dropped = True
-                    last_boss = wave.boss
-                    battle_reward.wave_egg(wave.boss, rep, boss=True)
+            battle_reward.progress = dungeon['reward']['progress']
+            battle_reward.dungeon_slug = msg.dungeonSlug
+            # get enemies and bosses
+            enemies = []
+            for wave in dungeon['waves']:
+                for enemy in wave['enemies']:
+                    enemies.append(enemy)
+                if wave['boss'] and wave['boss']['slug'] != "":
+                    enemies.append(wave['boss'])
+                    last_boss.append(wave['boss'])
+            if last_boss:
+                # if have last boss, remove it from enemies list
+                enemies = enemies[:-1]
             ## generate battle end reward
-            rep.xp = battle_reward.get_xp(last_boss.level)
-            rep.coins = battle_reward.get_coins(last_boss.level)
-            battle_reward.clear_egg(last_boss, dungeon.elements, rep)
-            battle_reward.speed_egg(last_boss, dungeon.elements, rep)
-            battle_reward.luck_egg(last_boss, dungeon.elements, pid, msg.leader_id, rep)
-            battle_reward.store()
+            rep.xp = dungeon['reward']['xp']
+            rep.coins = dungeon['reward']['softCurrency']
+            battle_reward.xp = rep.xp
+            battle_reward.coins = rep.coins
+            for egg in dungeon['reward']['eggs_enemy']:
+                battle_reward.drop_egg(enemies, egg, rep.enemy_egg, repeated=True)
+            for egg in dungeon['reward']['eggs_boss']:
+                battle_reward.drop_egg(last_boss, egg, rep.boss_egg, repeated=True)
 
+            battle_reward.drop_clearance_egg(last_boss, dungeon['reward']['eggs_clearance'], rep.clear_egg)
+            battle_reward.drop_speed_egg(last_boss, dungeon['reward']['eggs_clearance'], dungeon['speed_clearance'], rep.speed_egg)
+            battle_reward.drop_luck_egg(last_boss, dungeon['reward']['eggs_clearance'], pid, msg.leader_id, rep.luck_egg)
+            battle_reward.drop_dungeon_egg(dungeon['reward']['eggs_map'], rep.dungeon_egg)
+            if not player.spend_energy(dungeon['requirement']['energy'], do_store=True):
+                rep.result_code = proto.BattleBeginRepResultCode.Value('BATTLE_BEGIN_FAIL_ENERGY')
+                return self.resp(rep)
+            battle_reward.store()
         rep.result_code = proto.BattleBeginRepResultCode.Value('BATTLE_BEGIN_SUCCESS')
         return self.resp(rep)
 
@@ -110,15 +124,15 @@ class Game(ChildActor):
             rep.xp=msg.score/2
         else:
             reward = BattleReward(player_id=self.parent.pid).load()
-            if reward.player_id is None:
+            if reward.player_id is None or reward.dungeon_slug != msg.dungeonSlug:
                 rep.result_code = proto.ResultCode.Value("FAILED")
                 return self.resp(rep)
             if msg.win:
-                reward.pay(msg.speed)
+                reward.pay(msg.turns)
                 rep.result_code = proto.ResultCode.Value('SUCCESS')
             else:
                 rep.result_code = proto.ResultCode.Value('FAILED')
-            #reward.delete()
+            reward.delete()
         return self.resp(rep)
 
     @MessageHandlerWrapper(proto.SimpleResponse,
@@ -145,14 +159,7 @@ class Game(ChildActor):
             resp.result_code = FuseResultCode.Value("FUSE_TARGET_NOT_EXIST")
             return self.resp(resp)
 
-        # verify coins
         player = self.parent.player
-        fuse_currency = target_c.fuse_currency()
-        if player.coins < fuse_currency:
-            resp.result_code = FuseResultCode.Value("FUSE_NOT_ENOUGH_COINS")
-            resp.lack_coins = fuse_currency - player.coins
-            return self.resp(resp)
-        player.coins -= fuse_currency
 
         # verify feeders
         feeders = msg.feeders
@@ -191,15 +198,22 @@ class Game(ChildActor):
             feeder_plus_speed += f_c.fuse_plus_speed(target_c)
             feeder_plus_luck += f_c.fuse_plus_luck(target_c)
 
+        # verify coins
+        fuse_currency = target_c.fuse_currency() * len(feeder_cids)
+        if player.coins < fuse_currency:
+            resp.result_code = FuseResultCode.Value("FUSE_NOT_ENOUGH_COINS")
+            resp.lack_coins = fuse_currency - player.coins
+            return self.resp(resp)
+        player.coins -= fuse_currency
+
         got_mega = target_c.fuse_mega_odds(same_element_num, len(feeder_cids))
-        # TODO - move factor to config
-        MEGA_FACTOR = 2
+        mega_factor = GameRule.fuse_mega_factor
         if got_mega:
-            feeder_xp *= MEGA_FACTOR
-            feeder_plus_hp *= MEGA_FACTOR
-            feeder_plus_attack *= MEGA_FACTOR
-            feeder_plus_speed *= MEGA_FACTOR
-            feeder_plus_luck *= MEGA_FACTOR
+            feeder_xp *= mega_factor
+            feeder_plus_hp *= mega_factor
+            feeder_plus_attack *= mega_factor
+            feeder_plus_speed *= mega_factor
+            feeder_plus_luck *= mega_factor
 
         # TODO - save player & level_up & remove_feeder in one transaction.
         # do fuse
@@ -434,15 +448,76 @@ class Game(ChildActor):
     @MessageHandlerWrapper(AddEnergyRep, AddEnergyResultCode.Value(
         "ADD_ENERGY_INVALID_SESSION"))
     def AddEnergy(self, msg):
-        CONSUME_GEMS = 1  # TODO - Design
         resp = AddEnergyRep()
         player = self.parent.player
-        if player.gems < CONSUME_GEMS:
+        consume_gems = GameRule.energy_consume_gems
+        if player.gems < consume_gems:
             resp.result_code = AddEnergyResultCode.Value(
                 "ADD_ENERGY_NOT_ENOUGH_GEMS")
             return self.resp(resp)
         player.add_energy()
-        player.gems -= CONSUME_GEMS
+        player.gems -= consume_gems
         player.store()
+        log.info("Player(%s) consume %s gems to buy %s energy" %
+                 (player.id, consume_gems, player.get_max_energy()))
         resp.result_code = AddEnergyResultCode.Value("ADD_ENERGY_SUCCESS")
+        return self.resp(resp)
+
+    @MessageHandlerWrapper(ConvertMaterialRep, ConvertMaterialResultCode.Value(
+        "CONVERT_INVALID_SESSION"))
+    def ConvertMaterial(self, msg):
+        resp = ConvertMaterialRep()
+        f_m = msg.from_slug
+        t_m = msg.to_slug
+        amount = msg.amount
+        if not f_m:
+            resp.result_code = ConvertMaterialResultCode.Value(
+                "CONVERT_MISSING_FROM")
+        elif not t_m:
+            resp.result_code = ConvertMaterialResultCode.Value(
+                "CONVERT_MISSING_TO")
+        elif not amount:
+            resp.result_code = ConvertMaterialResultCode.Value(
+                "CONVERT_MISSING_AMOUNT")
+        else:
+            convert_info = GameRule.material_conversion.get(t_m)
+            rate = convert_info and convert_info.get(f_m)
+            if not rate:
+                resp.result_code = ConvertMaterialResultCode.Value(
+                    "CONVERT_NOT_ALLOWED")
+            else:
+                f_m_required = rate * amount
+                player = self.parent.player
+                if f_m_required > getattr(player, f_m):
+                    resp.result_code = ConvertMaterialResultCode.Value(
+                        "CONVERT_NOT_ENOUGH_MATERIAL")
+                else:
+                    player.modify_material(f_m, -f_m_required)
+                    player.modify_material(t_m, amount)
+                    player.store()
+                    log.info("Player(%s) convert %s(%s) to %s(%s)" %
+                             (player.id, f_m, f_m_required, t_m, amount))
+                    resp.result_code = ConvertMaterialResultCode.Value(
+                        "CONVERT_SUCCESS")
+        return self.resp(resp)
+
+    @MessageHandlerWrapper(BuyCreatureSpaceRep,
+                           BuyCreatureSpaceResultCode.Value(
+                               "BUY_CREATURE_SPACE_INVALID_SESSION"))
+    def BuyCreatureSpace(self, msg):
+        resp = BuyCreatureSpaceRep()
+        player = self.parent.player
+        consume_gems = GameRule.creature_space_consume_gems
+        if player.gems < consume_gems:
+            resp.result_code = BuyCreatureSpaceResultCode.Value(
+                "BUY_CREATURE_SPACE_NOT_ENOUGH_GEMS")
+        else:
+            player.buy_creature_space()
+            player.gems -= consume_gems
+            player.store()
+            log.info("Player(%s) consume %s gems to extend %s creature space."
+                     % (player.id, consume_gems,
+                        GameRule.extend_creature_space))
+            resp.result_code = BuyCreatureSpaceResultCode.Value(
+                "BUY_CREATURE_SPACE_SUCCESS")
         return self.resp(resp)

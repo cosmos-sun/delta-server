@@ -354,7 +354,7 @@ class Base(object):
             val = getattr(self, attr_name)
             if val is None:
                 continue
-            origin_val = cls._load_oids_by_attribute(attr_name, val)
+            origin_val = cls.load_oids_by_attribute(attr_name, val)
             if self.oid in origin_val:
                 continue
             origin_val.append(self.oid)
@@ -362,7 +362,7 @@ class Base(object):
             store_data(index_key, origin_val)
 
     @classmethod
-    def _load_oids_by_attribute(cls, attribute, val):
+    def load_oids_by_attribute(cls, attribute, val):
         key = cls._get_index_key(attribute, val)
         oid_list = load_data(key)
         return oid_list or []
@@ -373,7 +373,7 @@ class Base(object):
         if attribute not in cls._index_attributes:
             return None
         rep = []
-        for oid in cls._load_oids_by_attribute(attribute, val):
+        for oid in cls.load_oids_by_attribute(attribute, val):
             data = {attribute: val,
                     cls._oid_key: oid}
             obj = cls(**data)
@@ -384,7 +384,7 @@ class Base(object):
     def delete_from_index_attribute(self, attr_name, val=None):
         cls = type(self)
         val = val or getattr(self, attr_name)
-        origin_val = cls._load_oids_by_attribute(attr_name, val)
+        origin_val = cls.load_oids_by_attribute(attr_name, val)
         if self.oid in origin_val:
             origin_val.remove(self.oid)
             index_key = cls._get_index_key(attr_name, val)

@@ -8,31 +8,42 @@ from models.creature import CreatureInstance
 from models.creature import CreatureTeam
 from utils.exception import NotEnoughEnergy
 from utils.exception import UnsupportedPlayerAction
+from utils.protocol_pb2 import MaterialData
+from utils.protocol_pb2 import OSType
 from utils.protocol_pb2 import PlayerInfo
+from utils.settings import SESSION_TTL_DELTA
 from models.content import GameRule
 
 id_count = KeyValue('id_count')
-ENERGY_COUNTDOWN = 30  # TODO - Design
 
 
 class Player(Base):
     _oid_key = "id"
 
+    # static attr
     id = LongAttr()
     name = TextAttr()
-    level = IntAttr()
     agc_id = TextAttr()
     gc_id = TextAttr()
     facebook_id = LongAttr()
     device_id = TextAttr()  # Record the device create the player
+    os_type = IntAttr()
+
+    # game process
     login_time = DateTimeAttr()
     xp = IntAttr()
-    coins = IntAttr()
-    hearts = IntAttr()
-    gems = IntAttr()
+    level = IntAttr()
     energy = IntAttr()
     energy_update_time = IntAttr()
     progress = IntAttr()
+    max_creatures = IntAttr()
+
+    # monetary
+    coins = IntAttr()
+    hearts = IntAttr()
+    gems = IntAttr()
+
+    # materials
     stone_s = IntAttr()
     stone_m = IntAttr()
     stone_l = IntAttr()
@@ -57,57 +68,45 @@ class Player(Base):
             kw["id"] = id_count.incr(1, initial=1)
         if kw.get("is_new"):
             kw.setdefault("name", kw["id"])
-            kw.setdefault("level", 1)
             kw.setdefault("login_time", datetime.now())
-            kw.setdefault("xp", 0)
-            kw.setdefault("coins", 100)
-            kw.setdefault("gems", 10)
-            kw.setdefault("energy", 20)
-            kw.setdefault("hearts", 0)
-            kw.setdefault("progress", 0)
-            kw.setdefault("stone_s", 0)
-            kw.setdefault("stone_m", 0)
-            kw.setdefault("stone_l", 0)
-            kw.setdefault("stone_x", 0)
-            kw.setdefault("stone_fire_s", 0)
-            kw.setdefault("stone_fire_l", 0)
-            kw.setdefault("stone_wood_s", 0)
-            kw.setdefault("stone_wood_l", 0)
-            kw.setdefault("stone_water_s", 0)
-            kw.setdefault("stone_water_l", 0)
-            kw.setdefault("stone_light_s", 0)
-            kw.setdefault("stone_light_l", 0)
-            kw.setdefault("stone_dark_s", 0)
-            kw.setdefault("stone_dark_l", 0)
+            for key, val in GameRule.default_player_settings.get("attr").iteritems():
+                kw.setdefault(key, val)
+            for material in GameRule.material_slugs:
+                kw.setdefault(material, 0)
 
         super(Player, self).__init__(**kw)
 
         if kw.get('is_new'):
-            self.init_detials()
+            self.init_detials(kw.get("default_creatures"))
 
-    def init_detials(self):
-        CreatureInstance(player_id=self.id).create('firemouse_01',1,0,1,1,1,1)
-        CreatureInstance(player_id=self.id).create('woodmouse_01',1,0,1,1,1,1)
-        CreatureInstance(player_id=self.id).create('watermouse_01',1,0,1,1,1,1)
-        CreatureInstance(player_id=self.id).create('lightmouse_01',1,0,1,1,1,1)
-        CreatureInstance(player_id=self.id).create('darkmouse_01',1,0,1,1,1,1)
-        CreatureInstance(player_id=self.id).create('firemonkey_01',1,0,1,1,1,1)
-        CreatureInstance(player_id=self.id).create('woodmonkey_01',1,0,1,1,1,1)
-        CreatureInstance(player_id=self.id).create('watermonkey_01',1,0,1,1,1,1)
-        CreatureInstance(player_id=self.id).create('lightmonkey_01',1,0,1,1,1,1)
-        CreatureInstance(player_id=self.id).create('darkmonkey_01',1,0,1,1,1,1)
-        CreatureInstance(player_id=self.id).create('fireaynt_01',1,0,1,1,1,1)
-        CreatureInstance(player_id=self.id).create('woodaynt_01',1,0,1,1,1,1)
-        CreatureInstance(player_id=self.id).create('wateraynt_01',1,0,1,1,1,1)
-        CreatureInstance(player_id=self.id).create('lightaynt_01',1,0,1,1,1,1)
-        CreatureInstance(player_id=self.id).create('darkaynt_01',1,0,1,1,1,1)
-        CreatureTeam.create(self.id, ([1,2,3], [3,2,1], None, None, None)).store()
+    def init_detials(self, default_creatures):
+        c_ids = []
+        if default_creatures:
+            for slug, attr in default_creatures.iteritems():
+                c = CreatureInstance(player_id=self.id).create(slug, **attr)
+                c_ids.append(c.oid)
+        else:
+            for c_slug in GameRule.default_player_settings.get("creatures"):
+                c = CreatureInstance(player_id=self.id).create(c_slug)
+                c_ids.append(c.oid)
+
+        c_len = len(c_ids)
+        if c_len < CreatureTeam.team_length:
+            team = c_ids + [0] * (CreatureTeam.team_length - c_len)
+        else:
+            team = c_ids[:CreatureTeam.team_length]
+        CreatureTeam.create(self.id, team1=team).store()
 
     def add_xp(self, xp):
+        def _level_up_xp():
+            return self._get_level_config(self.level + 1).get("xp")
+
         self.xp += xp
-        while self.xp >= self._get_level_config(self.level + 1).get("xp"):
-            self.xp -= self._get_level_config(self.level + 1).get("xp")
+        leve_up_xp = _level_up_xp()
+        while self.xp >= leve_up_xp:
+            self.xp -= leve_up_xp
             self.level += 1
+            leve_up_xp = _level_up_xp()
 
     def set_info(self, rep, simple_mode=False):
         pid = int(self.id)
@@ -120,6 +119,14 @@ class Player(Base):
             rep.gems = self.gems or 0
             rep.hearts = self.hearts or 0
             rep.energy = self.get_energy()
+            rep.maxCreatures = self.max_creatures or 40
+            for slug in GameRule.material_slugs:
+                count = getattr(self, slug)
+                if count:
+                    m = MaterialData()
+                    m.slug = slug
+                    m.count = count
+                    rep.materialbox.add(slug=slug, count=count)
 
             creatures = CreatureInstance.get_all_by_player(self.id)
             rep.creaturebox.extend(creatures)
@@ -175,22 +182,41 @@ class Player(Base):
         return self.energy_update_time or 0
 
     def _update_energy(self, val, do_store=False):
-        energy = self.get_energy()
+        energy, countdown = self.get_energy(with_countdown=True)
         if energy + val < 0:
             return False
             #raise NotEnoughEnergy(self.id, energy, -val)
         self.energy = energy + val
-        self.energy_update_time = int(time())
+
+        update_time = int(time())
+        if self.energy < self.get_max_energy():
+            # deduction the countdown if not met max energy
+            update_time -= countdown
+        self.energy_update_time = update_time
         if do_store:
             self.store()
         return True
 
-    def get_energy(self):
+    def get_energy(self, with_countdown=False):
+        energy, countdown = self._get_energy()
+        if with_countdown:
+            return energy, countdown
+        return energy
+
+    def _get_energy(self):
         energy = self.energy or 0
         max_energy = self.get_max_energy()
-        now = int(time())
-        update_time = self._energy_update_time()
-        return min(energy + (now - update_time) / ENERGY_COUNTDOWN, max_energy)
+        if energy >= max_energy:
+            return energy, 0
+
+        # calculate countdown if not meet max energy
+        since_last_update = int(time()) - self._energy_update_time()
+        energy_delta = since_last_update / GameRule.energy_countdown
+        energy += energy_delta
+        if energy >= max_energy:
+            return max_energy, 0
+        countdown = since_last_update % GameRule.energy_countdown
+        return energy, countdown
 
     def get_energy_countdown(self):
         """
@@ -201,7 +227,7 @@ class Player(Base):
         if energy >= max_energy:
             return 0
         since_last_update = int(time()) - self._energy_update_time()
-        _countdown = (max_energy - energy) * ENERGY_COUNTDOWN
+        _countdown = (max_energy - energy) * GameRule.energy_countdown
         if since_last_update >= _countdown:
             return 0
         return _countdown - since_last_update
@@ -216,6 +242,15 @@ class Player(Base):
     def set_progress(self, p):
         p = self.progress if p < self.progress else p
         self.progress = p
+
+    def modify_material(self, slug, val):
+        setattr(self, slug, getattr(self, slug) + val)
+
+    def buy_creature_space(self):
+        self.max_creatures += GameRule.extend_creature_space
+
+    def get_os_type(self):
+        return self.os_type or OSType.Value("IOS")
 
 
 class Session(Base):
@@ -234,9 +269,7 @@ class Session(Base):
         return str(uuid.UUID(bytes=M2Crypto.m2.rand_bytes(16)))
 
     def refresh_session(self):
-        # TODO - move ttl_delta to config
-        ttl_delta = 60 * 60 * 24  # 1 day for testing
-        ttl = int(time()) + ttl_delta
+        ttl = int(time()) + SESSION_TTL_DELTA
         db.touch(Session(id=self.id)._get_key(), ttl)
         db.touch(Session._get_index_key("player_id", self.player_id), ttl)
         return
@@ -248,3 +281,9 @@ class DeviceLink(Base):
 
     device_id = TextAttr()
     player_id = LongAttr()
+
+class PassedDungeons(Base):
+    _oid_key = "player_id"
+
+    player_id = LongAttr()
+    slugs = ListAttr(TextAttr())

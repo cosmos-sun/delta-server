@@ -17,7 +17,6 @@ class CreatureInstance(Base):
     c_id = IntAttr()
 
     slug = TextAttr()
-    id = IntAttr()
     xp = IntAttr()
     level = IntAttr()
     plusHP = IntAttr()
@@ -32,7 +31,6 @@ class CreatureInstance(Base):
     def _save(self, slug, level=1, xp=0, plus_hp=0, plus_attack=0,
               plus_speed=0, plus_luck=0):
         slug = slug.lower()
-        creature_type = GameRule.creature_types.get(slug)
         self.slug = slug
         self.xp = xp
         self.level = level
@@ -68,7 +66,7 @@ class CreatureInstance(Base):
         c.slug = self.slug
         c.xp = self.xp
         c.level = self.level
-        c.plusHP = self.plusHP
+        c.plusHP = int(self.plusHP)
         c.plusAttack = self.plusAttack
         c.plusSpeed = self.plusSpeed
         c.plusLuck = self.plusLuck
@@ -168,7 +166,7 @@ class CreatureInstance(Base):
             param_b = params.get("plusHPInheritParamB", 2)
             if self.is_same_element(eater):
                 param_b += 1
-            return param_a * param_b * self.plusHP
+            return round(param_a * param_b * self.plusHP)
         return 0
 
     def fuse_plus_attack(self, eater):
@@ -259,6 +257,8 @@ class CreatureInstance(Base):
 
 class CreatureTeam(Base):
     _oid_key = "player_id"
+    default_team = [0, 0, 0]
+    team_length = 3
 
     player_id = IntAttr()
     team1 = ListAttr(IntAttr())
@@ -268,24 +268,26 @@ class CreatureTeam(Base):
     team5 = ListAttr(IntAttr())
 
     @classmethod
-    def create(cls, pid, teams):
+    def create(cls, pid, team1=default_team, team2=default_team,
+               team3=default_team, team4=default_team, team5=default_team):
         data =  {'player_id': pid,
-                 'team1': teams[0],
-                 'team2': teams[1],
-                 'team3': teams[2],
-                 'team4': teams[3],
-                 'team5': teams[4],
+                 'team1': team1,
+                 'team2': team2,
+                 'team3': team3,
+                 'team4': team4,
+                 'team5': team5,
         }
         return CreatureTeam(**data)
 
     @classmethod
     def store_from_proto(cls, pid, protos):
         t = cls(player_id=pid).load()
-        t.team1 = [i for i in protos[0].creaturesIds]
-        t.team2 = [i for i in protos[1].creaturesIds]
-        t.team3 = [i for i in protos[2].creaturesIds]
-        t.team4 = [i for i in protos[3].creaturesIds]
-        t.team5 = [i for i in protos[4].creaturesIds]
+        length = len(protos)
+        t.team1 = [i for i in protos[0].creaturesIds] if length >= 1 else [0,0,0]
+        t.team2 = [i for i in protos[1].creaturesIds] if length >= 2 else [0,0,0]
+        t.team3 = [i for i in protos[2].creaturesIds] if length >= 3 else [0,0,0]
+        t.team4 = [i for i in protos[3].creaturesIds] if length >= 4 else [0,0,0]
+        t.team5 = [i for i in protos[4].creaturesIds] if length >= 5 else [0,0,0]
 
         t.store()
 
@@ -320,31 +322,3 @@ class CreatureTeam(Base):
             if team:
                 teams.append(team)
         return teams
-
-#TODO: figure out how to deal with the class below
-class MaterialInfo(Base):
-    _oid_key = "material_id"
-
-    material_id = IntAttr()
-
-class BoostInfo(Base):
-    _oid_key = "boost_id"
-    boost_id = IntAttr()
-    attack = IntAttr()
-    speed = IntAttr()
-    hp = IntAttr()
-    cd = IntAttr()
-    aiming = IntAttr()
-
-class EvolveInfo(Base):
-    _oid_key = "slug"
-
-    slug = TextAttr()
-    elapsed = IntAttr()
-    endtime = IntAttr()
-
-class MissionInst(Base):
-    _oid_key = "misstion_id"
-
-    misstion_id = IntAttr()
-    progress = IntAttr()

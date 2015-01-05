@@ -1,8 +1,8 @@
 from base_actor import ChildActor
 from base_actor import MessageHandlerWrapper
-from utils.protocol_pb2 import GET_PRODUCTS_CODE
-from utils.protocol_pb2 import OS_TYPE
-from utils.protocol_pb2 import PURCHASE_RESULT_CODE
+from utils.protocol_pb2 import GetProductsResultCode
+from utils.protocol_pb2 import OSType
+from utils.protocol_pb2 import PurchaseResultCode
 from utils.protocol_pb2 import ProductsResp
 from utils.protocol_pb2 import PurchaseResp
 from utils.protocol_pb2 import TransactionInfo
@@ -15,43 +15,26 @@ from utils import log
 
 class ProductsListActor(ChildActor):
     purchase_handle_map = {
-        OS_TYPE.Value("IOS"): IAPTransaction(),
-        OS_TYPE.Value("Android"): IABTransaction(),
+        OSType.Value("IOS"): IAPTransaction(),
+        OSType.Value("Android"): IABTransaction(),
     }
 
-    @MessageHandlerWrapper(ProductsResp, GET_PRODUCTS_CODE.Value(
+    @MessageHandlerWrapper(ProductsResp, GetProductsResultCode.Value(
         "GET_PRODUCTS_INVALID_SESSION"))
     def ProductsReq(self, msg):
-        user_id = self.parent.pid
+        player = self.parent.player
+        os_type = player.get_os_type()
         resp = ProductsResp()
-        if user_id:
-            # TODO get os_type by getPlayerInfo
-            #player_info = getPlayerInfo(user_id)
-            # if player_info:
-            #     os_type = player_info.os_type
-            #     if ProductsList.is_valid_os_type(os_type):
-            #         resp.result_code = GET_PRODUCTS_CODE.Value(
-            #             "GET_PRODUCTS_SUCCESS")
-            #         resp.products = ProductsList().get_products_list(os_type)
-            #     else:
-            #         resp.result_code = GET_PRODUCTS_CODE.Value(
-            #             "NOT_SUPPORTED_DEVICE")
-            # else:
-            #     resp.result_code = GET_PRODUCTS_CODE.Value(
-            #            "INVALID_PLAYER_ID")
-            import random
-            os_type = random.choice(OS_TYPE.values())
-            if ProductsList.is_valid_os_type(os_type):
-                resp.result_code = GET_PRODUCTS_CODE.Value("GET_PRODUCTS_SUCCESS")
-                resp.products = ProductsList.instance(
-                    ).get_products_list(os_type)
-            else:
-                resp.result_code = GET_PRODUCTS_CODE.Value("NOT_SUPPORTED_DEVICE")
+        if ProductsList.is_valid_os_type(os_type):
+            resp.result_code = GetProductsResultCode.Value(
+                "GET_PRODUCTS_SUCCESS")
+            resp.products = ProductsList().get_products_list(os_type)
         else:
-            resp.result_code = GET_PRODUCTS_CODE.Value("INVALID_PLAYER_ID")
+            resp.result_code = GetProductsResultCode.Value(
+                "NOT_SUPPORTED_DEVICE")
         self.resp(resp)
 
-    @MessageHandlerWrapper(PurchaseResp, PURCHASE_RESULT_CODE.Value(
+    @MessageHandlerWrapper(PurchaseResp, PurchaseResultCode.Value(
         "PURCHASE_INVALID_SESSION"))
     def PurchaseReq(self, msg):
         resp = PurchaseResp()
@@ -60,9 +43,11 @@ class ProductsListActor(ChildActor):
         p_info = ProductsList.instance().get_product_info(product_id)
         if not p_info:
             trans_info = TransactionInfo()
-            trans_info.result_code = PURCHASE_RESULT_CODE.Value("INVALID_PRODUCT_ID")
-            resp.trans_infos = [trans_info]
+            trans_info.result_code = PurchaseResultCode.Value(
+                "INVALID_PRODUCT_ID")
+            resp.trans_infos.extend([trans_info])
         else:
             handler = self.purchase_handle_map.get(p_info.os_type)
-            resp.trans_infos = handler.handle_purchase(user_id, p_info, msg)
+            resp.trans_infos.extend(handler.handle_purchase(
+                user_id, p_info, msg))
         self.resp(resp)

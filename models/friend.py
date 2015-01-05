@@ -6,6 +6,8 @@ from utils.protocol_pb2 import FriendInfo
 from utils.protocol_pb2 import GetFriendsInfoRep
 from utils.protocol_pb2 import GetFriendsInfoResultCode
 from utils.protocol_pb2 import ModifyFriendResultCode
+from utils.settings import ENABLE_FACEBOOK
+from utils.settings import FB_SAMPLE_ID
 
 
 class FriendBase(Base):
@@ -37,6 +39,22 @@ class FriendBase(Base):
         if player_id in self.get_list():
             self.player_list.remove(player_id)
             self.store()
+
+    def generate_proto(self, player_id):
+        player = Player(id=player_id).load()
+        return player.to_proto_class(simple_mode=True)
+
+    def to_proto_list(self):
+        return [self.generate_proto(p_id) for p_id in self.get_list()]
+
+
+class FacebookList(object):
+
+    def get_list(self):
+        if not ENABLE_FACEBOOK:
+            return []
+        # TODO - use real data, mock up for test now.
+        return Player.load_oids_by_attribute("facebook_id", FB_SAMPLE_ID)
 
     def generate_proto(self, player_id):
         player = Player(id=player_id).load()
@@ -111,7 +129,6 @@ class Friend(object):
         self.other_send_list = SendPendingList(player_id=friend_id)
         self.other_receive_list = ReceivePendingList(player_id=friend_id)
         self.other_favorite_list = FavoriteList(player_id=friend_id)
-
 
     def check_limit(self, friend_id):
         # check if the self already reach the max friend number
@@ -210,3 +227,7 @@ class Friend(object):
 
     def get_favorite_list(self):
         return self.favorite_list.get_list()
+
+    def get_facebook_list(self):
+        fb = FacebookList()
+        return fb.get_list()

@@ -1,10 +1,11 @@
 import base64
 
+from dal.base import KeyValue
 from utils import log, protocol_pb2
+from utils.settings import ACTIVATE_PLAYER_NUMBER
 
 
-active_player_num = 50
-latest_login_players = []
+latest_login_players = KeyValue("LATEST_LOGIN_PLAYERS")
 
 
 def parse_message(name, body):
@@ -34,13 +35,14 @@ def generate_message(e):
 
 
 def update_latest_login_players(player_id):
-    global latest_login_players
-    if player_id in latest_login_players:
-        latest_login_players.remove(player_id)
-    latest_login_players.append(player_id)
-    latest_login_players = latest_login_players[-active_player_num:]
-    return latest_login_players
+    activate_players = get_latest_login_players()
+    if player_id in activate_players:
+        activate_players.remove(player_id)
+    activate_players.append(player_id)
+    activate_players = activate_players[-ACTIVATE_PLAYER_NUMBER:]
+    latest_login_players.store(activate_players)
+    return activate_players
 
 
 def get_latest_login_players():
-    return latest_login_players
+    return latest_login_players.load() or []

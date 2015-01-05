@@ -30,10 +30,15 @@ RUN pip install gevent pykka protobuf \
     bottle \
     dogpile dogpile.cache \
     dateutils
+RUN pip install simplejson
 
 RUN apt-get install M2Crypto ipython
 
 RUN pip install server-reloader docopt
+
+# zmq
+RUN apt-get install libzmq-dev
+RUN pip install pyzmq
 
 ADD . /app
 WORKDIR /app

@@ -1,2 +1,2 @@
-from creature import CreatureInstance, CreatureTeam, MaterialInfo, BoostInfo, EvolveInfo, MissionInst
+from creature import CreatureInstance, CreatureTeam
 from player import Player

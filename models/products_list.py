@@ -1,27 +1,8 @@
 from dal.base import *
-from utils.protocol_pb2 import OS_TYPE
 from utils.exception import InvalidPurchaseItem
-
-
-# TODO move this settings to etcd/zonekeeper
-PURCHASE_ITEM = {
-    OS_TYPE.Value("IOS"): {
-        "APPLE_PROD_1": {"price": 6,
-                         "currency": "$",
-                         "quantity": 50},
-        "APPLE_PROD_2": {"price": 12,
-                         "currency": "$",
-                         "quantity": 100},
-    },
-    OS_TYPE.Value("Android"): {
-        "Android_PROD_1": {"price": 6,
-                           "currency": "$",
-                           "quantity": 50},
-        "Android_PROD_2": {"price": 12,
-                           "currency": "$",
-                           "quantity": 100},
-    }
-}
+from utils.protocol_pb2 import OSType
+from utils.protocol_pb2 import ProductInfo
+from utils.settings import PURCHASE_ITEMS
 
 
 class PurchaseItem(Base):
@@ -45,12 +26,20 @@ class PurchaseItem(Base):
             raise InvalidPurchaseItem("Missing quantity")
         self.quantity = quantity
 
+    def to_protocal(self):
+        proto = ProductInfo()
+        proto.pid = self.p_id
+        proto.price = self.price
+        proto.currency = self.currency
+        proto.quantity = self.quantity
+        return proto
+
 
 class ProductsList(object):
     # os_type_products_map = {os_type: [product_item1, product_item2, ...]}
     # product_info_map = {product_id1: product_item1,
     #                     product_id2: product_item2}
-    supported_os_type = OS_TYPE.values()
+    supported_os_type = OSType.values()
     os_type_products_map = {}
     product_info_map = {}
     __instance = None
@@ -60,11 +49,11 @@ class ProductsList(object):
         # Use instance to ensure purchase items been loaded.
         if not cls.instance:
             cls.__instance = cls()
-            for os_type, products in PURCHASE_ITEM.iteritems():
+            for os_type, products in PURCHASE_ITEMS.iteritems():
                 products_list = []
                 for p_id, item_attr in products.iteritems():
                     purchase_item = PurchaseItem(p_id, **item_attr)
-                    products_list.append(purchase_item)
+                    products_list.append(purchase_item.to_protocal())
                     cls.__instance.product_info_map[p_id] = purchase_item
                 cls.__instance.os_type_products_map[os_type] = products_list
         return cls.__instance

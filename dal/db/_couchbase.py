@@ -1,9 +1,9 @@
 import time
 from couchbase.connection import Connection
 from couchbase.exceptions import *
-import settings
-
+from utils import settings
 from utils import log
+
 
 cb = None
 

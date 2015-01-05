@@ -9,6 +9,7 @@ from utils.protocol_pb2 import LinkAccountRep
 from utils.protocol_pb2 import LinkAccountResultCode
 from utils.protocol_pb2 import LoginAccountRep
 from utils.protocol_pb2 import LoginAccountResultCode
+from utils.protocol_pb2 import OSType
 from utils.protocol_pb2 import SignInRep
 from utils.protocol_pb2 import SignInResultCode
 from utils.protocol_pb2 import SignUpRep
@@ -94,7 +95,6 @@ class BaseSignIn(BaseAuth):
         session = session and session[0]
         if session:
             session.delete()
-            # TODO - handle duplicate login
         session = self.generate_session(player.id)
         update_latest_login_players(player.id)
 
@@ -132,7 +132,7 @@ class BaseLogin(BaseAuth):
     """
 
     def update_old_device_id(self, msg):
-        if msg.pre_device_id:
+        if msg.pre_device_id and msg.pre_device_id != msg.device_id:
             device = DeviceLink(device_id=msg.pre_device_id)
             if device.exist():
                 device.load()
@@ -189,7 +189,14 @@ class BaseLogin(BaseAuth):
                 self.init_device_link(msg.device_id, player.id)
 
         player.login_time = datetime.now()
+        if msg.info.os_type:
+            player.os_type = msg.info.os_type
         player.store()
+        session = Session.load_by_attribute("player_id", player.id)
+        session = session and session[0]
+        if session:
+            # delete previous session - avoid duplicate login.
+            session.delete()
         session = self.generate_session(player.id)
         update_latest_login_players(player.id)
         resp.session_id = session.id
@@ -329,7 +336,9 @@ class DeviceSignIn(BaseSignIn, BaseDevice):
 
 
 class DeviceLogin(BaseLogin, BaseDevice):
-    pass
+
+    def get_pip_id(self, msg):
+        return msg.device_id
 
 
 class Account(ParentActor):

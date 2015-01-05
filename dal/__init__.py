@@ -1,6 +1,6 @@
 import _cache
 import db
-from settings import USE_CACHE
+from utils.settings import USE_CACHE
 
 
 def load_data(key):

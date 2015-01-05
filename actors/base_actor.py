@@ -3,9 +3,9 @@
 from types import FunctionType
 from pykka import ActorRegistry
 from pykka.gevent import GeventActor
+from stats import StatsActor
 
 from utils.misc import generate_message
-from actor_settings import *
 
 from utils import log
 
@@ -13,19 +13,25 @@ from utils import log
 msg_map = {}
 INVALID_SESSION_PID = -1
 
+
 #class BaseActor(pykka.ThreadingActor):
 class BaseActor(GeventActor):
     def on_receive(self, msg):
         try:
             return getattr(self, msg['func'])(msg['msg'])
         except Exception, e:
-            log.error('Error get func by name: %s', e, exc_info=True)
+            log.error('Get error: %s', e, exc_info=True)
             # TODO fix return
             return None
 
     def resp(self, msg):
-        #log.info('event send %s' % msg)
         return generate_message(msg)
+
+    def send_event(self, event, data):
+        msg = {"event": event, "data": data}
+        actor = ActorRegistry.get_by_class(StatsActor)
+        actor = actor and actor[0] or StatsActor.start()
+        actor.tell(msg)
 
 
 class ActorMeta(type):
@@ -60,13 +66,10 @@ class ParentActor(BaseActor):
 
 class ChildActor(BaseActor):
     __metaclass__ = ActorMeta
+
     def __init__(self, parent):
         super(ChildActor, self).__init__()
         self.parent = parent
-
-    def on_failure(self, exception_type, exception_value, traceback):
-        log.error('on failure')
-        self.parent.actor_ref.tell({'type': TYPE_ERROR, 'actor': self, 'exception': exception_value, 'traceback': traceback})
 
 
 class MessageHandlerWrapper(object):

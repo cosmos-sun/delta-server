@@ -1,6 +1,6 @@
-import json
+import simplejson
 from dal.base import *
-from models.player import Player
+from models.player import Player, PassedDungeons
 from models.content import GameRule, assign_value
 from models.creature import CreatureInstance
 from utils import protocol_pb2 as proto
@@ -12,63 +12,84 @@ class BattleReward(Base):
     player_id = IntAttr()
     xp = IntAttr()
     coins = IntAttr()
+    dungeon_reward = TextAttr()
     eggs = ListAttr(TextAttr())
-    _speed_egg = TextAttr()
+    _speed_eggs = ListAttr(TextAttr())
+    _speed_turns = ListAttr(IntAttr())
+    _dungeon_eggs = ListAttr(TextAttr())
     progress = IntAttr()
+    dungeon_slug = TextAttr()
 
-    def add_egg(self, egg, egg_data, speed=False):
+    def add_egg(self, egg, egg_data, speed=None, dungeon=False):
         assign_value(egg, egg_data)
-        self.eggs = self.eggs or []
+        if not self.eggs: self.eggs = []
+        if not self._speed_eggs: self._speed_eggs = []
+        if not self._speed_turns: self._speed_turns = []
+        if not self._dungeon_eggs: self._dungeon_eggs = []
         if speed:
-            self._speed_egg = json.dumps(egg_data)
+            self._speed_eggs.append(simplejson.dumps(egg_data))
+            self._speed_turns.append(speed)
+        elif dungeon:
+            self._dungeon_eggs.append(simplejson.dumps(egg_data))
         else:
-            self.eggs.append(json.dumps(egg_data))
+            self.eggs.append(simplejson.dumps(egg_data))
 
-    def wave_egg(self, enemy, rep, boss=False):
-        ratio = GameRule.battle_boss_egg_ratio \
-                if boss else GameRule.battle_enemy_egg_ratio
-        if not GameRule.true_from_ratio(ratio):
-            return
-        element = proto.Element.Name(GameRule.creature_types[enemy.slug].element)
-        egg_data =  GameRule.battle_drop_egg(enemy, [element])
-        if boss:
-            egg = rep.boss_egg
-        else:
-            egg = rep.enemy_egg.add()
-        self.add_egg(egg, egg_data)
+    def drop_egg(self, droppers, config, rep, repeated=False, speed=False, dungeon_reward=False):
+        egg_data =  GameRule.battle_drop_egg(droppers, config, dungeon_reward)
+        if not egg_data: return
+        egg = rep.add() if repeated else rep
+        self.add_egg(egg, egg_data, speed=speed, dungeon=dungeon_reward)
 
-    def get_xp(self, level=1):
-        self.xp = GameRule.number_with_ratio(level * 50, GameRule.battle_reward_ratio, True)
-        return self.xp
+    def drop_clearance_egg(self, droppers, configs, rep, repeated=False, speed=False):
+        number = GameRule.random_from_number(configs['total'])
+        index = 0
+        for i in range(len(configs['rates'])):
+            if configs['rates'][i] >= number:
+                index = i
+                break
+        config = configs['loots'][index]
+        self.drop_egg(droppers, config, rep, repeated=repeated, speed=speed)
 
-    def get_coins(self, level=1):
-        self.coins = GameRule.number_with_ratio(level * 50, GameRule.battle_reward_ratio, True)
-        return self.coins
-
-    def clear_egg(self, dropper, elements, rep):
-        egg_data =  GameRule.battle_drop_egg(dropper, elements)
-        egg = rep.clear_egg
-        self.add_egg(egg, egg_data)
-
-    def speed_egg(self, dropper, elements, rep):
-        egg_data =  GameRule.battle_drop_egg(dropper, elements)
-        egg = rep.speed_egg
-        self.add_egg(egg, egg_data, speed=True)
-
-    def luck_egg(self, dropper, elements, pid, leader_id, rep):
+    def drop_luck_egg(self, dropper, configs, pid, leader_id, rep):
         luck = CreatureInstance(c_id=leader_id, player_id=pid).load().plusLuck or 0
         if not GameRule.battle_drop_luck_egg(luck): return
-        egg_data =  GameRule.battle_drop_egg(dropper, elements)
-        egg = rep.luck_egg
-        self.add_egg(egg, egg_data)
+        self.drop_clearance_egg(dropper, configs, rep)
 
-    def pay(self, speed):
+    def drop_speed_egg(self, dropper, configs, speed_configs, rep):
+        if not speed_configs: return
+        for i in range(len(speed_configs)):
+            speed_egg = rep.add()
+            speed_egg.param.append(speed_configs[i])
+            egg = speed_egg.egg.add()
+            self.drop_clearance_egg(dropper, configs, egg, speed=speed_configs[i])
+
+    def drop_dungeon_egg(self, configs, rep):
+        #TODO: discuss if we need check passed_dungeons when battle begin or not
+        passed_dungeons = PassedDungeons(player_id=self.player_id).load().slugs or []
+        if self.dungeon_slug in passed_dungeons: return
+        for config in configs:
+            self.drop_egg('', config, rep, repeated=True, dungeon_reward=True)
+
+    def calc_speed_eggs(self, turns):
+        if not turns: return
+        for i in sorted(self._speed_turns, reverse=True):
+            if turns <= i and self._speed_eggs:
+                self.eggs.append(self._speed_eggs.pop(0))
+            else:
+                break
+
+    def pay(self, speed_turns):
         player = Player(id=self.player_id).load()
+        passed_dungeons = PassedDungeons(player_id=self.player_id).load()
+        if not passed_dungeons.slugs: passed_dungeons.slugs = []
+        if self.dungeon_slug not in passed_dungeons.slugs:
+            passed_dungeons.slugs.append(self.dungeon_slug)
+            passed_dungeons.store()
+            self.eggs.extend(self._dungeon_eggs)
         coins = self.coins
-        if speed:
-            self.eggs.append(self._speed_egg)
+        self.calc_speed_eggs(speed_turns)
         for egg in self.eggs:
-            egg = json.loads(egg)
+            egg = simplejson.loads(egg)
             if egg['type'] == GameRule.FAERIE_EGG or egg['type'] == GameRule.SELF_EGG:
                 c_data = egg['creature']
                 c = CreatureInstance(player_id=self.player_id).create(c_data['slug'],
@@ -79,7 +100,6 @@ class BattleReward(Base):
                                               plusSpeed=c_data.get('plusSpeed', 0),
                                               plusLuck=c_data.get('plusLuck', 0),
                     )
-
                 c.store()
             elif egg['type'] == GameRule.MATERIAL_EGG:
                 m = egg.get('material')

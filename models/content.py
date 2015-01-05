@@ -1,5 +1,5 @@
-import os, sys, random, base64, json
-
+import random
+import simplejson
 from dal.base import Base
 from dal.base import IntAttr, ListAttr, PickleAttr, TextAttr
 from utils import log
@@ -8,13 +8,12 @@ from utils.protocol_pb2 import Element
 
 OID = 0
 
-
 def build_enum_type(name):
     return '_' + name.upper()
 
 def assign_value(inst, data):
     for name, value in inst.DESCRIPTOR.fields_by_name.items():
-        if name not in data:
+        if not data or name not in data:
             continue
         attr = getattr(inst, name)
         if hasattr(attr, 'DESCRIPTOR'):
@@ -55,6 +54,7 @@ class GameRule(object):
     SELF_EGG     = 'SELF_EGG'
     MATERIAL_EGG = 'MATERIAL_EGG'
     COIN_EGG     = 'COIN_EGG'
+    GEM_EGG     = 'GEM_EGG'
 
     configs = None
     configs_proto = None
@@ -67,35 +67,17 @@ class GameRule(object):
     creature_stars = {}
     creature_series = {}
     faerie_types = {}
+    faerie_element_tier = {}
+    materials_element_tier = {}
     player_level = {}
     gacha_list = {}
     evolve_config = {}
     gatcha_machines = {}
-    # mocked
-    battle_enemy_egg_ratio = 0.3
-    battle_boss_egg_ratio = 1
+    material_conversion = {}
+    material_slugs = []
+
+    # ==== mocked start ====
     battle_reward_ratio = 0.1
-    battle_egg_type_ratio = {
-        FAERIE_EGG: 1,
-        SELF_EGG: 1,
-        MATERIAL_EGG: 1,
-        COIN_EGG: 1,
-    }
-    material_none_drop_ratio = (
-        (10,1),
-        (30,2),
-        (50,3),
-        (70,4),
-    )
-    material_element_drop_ratio = (
-        (35,1),
-        (70,2),
-    )
-    faerie_drop_ratio = (
-        (30,1),
-        (60,2),
-        (90,3),
-    )
     gacha_trees = {
         'tree1': [
             {'type': 'STARS', 'stars':  [1,2,3], 'ratio': 2},
@@ -106,6 +88,33 @@ class GameRule(object):
             {'type': 'FAERIE', 'elements': ['WATER'], 'tier': 1, 'ratio': 3},
         ],
     }
+    fuse_mega_factor = 2
+    extend_creature_space = 5
+    creature_space_consume_gems = 5
+    energy_consume_gems = 1
+    energy_countdown = 30  # in seconds
+    helper_conf = {"favorite_factor": 1,
+                   "facebook_friend_factor": 2,
+                   "friend_factor": 1,
+                   "total_num": 10}
+    default_player_settings = {
+        "attr": {"level": 1,
+                 "xp": 0,
+                 "coins": 100,
+                 "gems": 10,
+                 "energy": 20,
+                 "hearts": 0,
+                 "progress": 0,
+                 "max_creatures": 40,
+                 },
+        "creatures": ["firemouse_01", "woodmouse_01", "watermouse_01",
+                      "lightmouse_01", "darkmouse_01",
+                      "firemonkey_01", "woodmonkey_01", "watermonkey_01",
+                      "lightmonkey_01", "darkmonkey_01",
+                      "fireaynt_01", "woodaynt_01", "wateraynt_01",
+                      "lightaynt_01", "darkaynt_01"]
+    }
+    # ==== mocked end ====
 
     @classmethod
     def get_content(cls):
@@ -114,14 +123,16 @@ class GameRule(object):
 
             # load global configs from db
             if cls.content.configs:
-                cls.configs = json.loads(cls.content.configs)
+                cls.configs = simplejson.loads(cls.content.configs)
                 cls.configs_proto = proto.GlobalConfigs()
                 assign_value(cls.configs_proto, cls.configs)
+
+                # player level info
                 level_info = cls.configs.get("playerLevel")
                 if level_info:
                     cls.player_level = dict(zip(range(1, len(level_info) + 1),
                                             level_info))
-
+                # evolution
                 tier_map = {1: "s", 2: "l"}
                 for evolve_info in cls.configs.get("evolutionDefinition"):
                     _conf = {}
@@ -146,33 +157,27 @@ class GameRule(object):
                                    (e_name, tier_map.get(m_info.get("tier")))
                             element[slug] = m_info.get("count")
                         _conf[e_val] = element
-            # load world from db
-            if cls.content.world:
-                cls.world_proto = proto.World()
-                assign_value(cls.world_proto, json.loads(cls.content.world))
-                # set up world dict
-                for zone in cls.world_proto.zones:
-                    for area in zone.areas:
-                        for dungeon in area.dungeons:
-                            cls.dungeons[dungeon.slug] = dungeon
-                for zone in cls.world_proto.zones:
-                    cls.world[zone.slug] = {
-                        'requirement': zone.requirement,
-                    }
-                    for area in zone.areas:
-                        cls.world[zone.slug][area.slug] = {
-                            'requirement': area.requirement,
-                        }
-                        for dungeon in area.dungeons:
-                            cls.world[zone.slug][area.slug][dungeon.slug] = dungeon
+
+                # materials
+                for material in cls.configs.get("craftingMaterial", []):
+                    slug = material.get("slug")
+                    cls.material_slugs.append(slug)
+
+                    conversion = {}
+                    for _info in material.get("conversion", []):
+                        conversion[_info.get("slug")] = _info.get("count")
+                    if conversion:
+                        cls.material_conversion[slug] = conversion
+
             # load creature from db
             if cls.content.creature_types:
                 for t in cls.content.creature_types:
                     d = proto.CreatureType()
-                    assign_value(d, json.loads(t))
+                    assign_value(d, simplejson.loads(t))
                     #TODO: only for sampleworld
                     if d.displayID < 500:
                         continue
+                    #==========================
                     cls.creature_types_proto.append(d)
                 # set up creature types dict
                 for c in cls.creature_types_proto:
@@ -180,7 +185,26 @@ class GameRule(object):
                     slugs = cls.creature_stars.get(c.starRating, [])
                     slugs.append(c.slug)
                     cls.creature_stars[c.starRating] = slugs
-                #for i in cls.creature_types_proto: print i.displayID, i.slug
+
+            # load world from db
+            if cls.content.world:
+                cls.world_proto = proto.World()
+                cls.world = simplejson.loads(cls.content.world)
+                # build world dict
+                for z in cls.world.get('zones'):
+                    for a in z.get('areas'):
+                        for d in a.get('dungeons'):
+                            cls.dungeons[d['slug']] = d
+                            for w in d['waves']:
+                                for e in w['enemies']:
+                                    e['element'] = proto.Element.Name(cls.creature_types[e['slug']].element)
+                                if w.get('boss') and w.get('boss').get('slug'):
+                                    w['boss']['element'] = proto.Element.Name(cls.creature_types[w['boss']['slug']].element)
+                            for e in ('eggs_enemy', 'eggs_boss', 'eggs_map'):
+                                d['reward'][e] = cls.build_egg_from_content(e, d['reward'][e])
+                            d['reward']['eggs_clearance'] = cls.build_eggs_clearance(d['reward']['eggs_clearance'])
+                            d['reward']['eggs'] = d['reward']['eggs_map']
+                assign_value(cls.world_proto, cls.world)
                 # get first stage
                 tmp_dict = {}
                 for k, v in cls.creature_types.iteritems():
@@ -219,7 +243,10 @@ class GameRule(object):
             # build faeries dict
             for i in cls.configs.get('faeries'):
                 cls.faerie_types[i['slug']] = i
-
+                cls.faerie_element_tier[i['element'] + str(i['tier'])] = i
+            # build material dict
+            for i in cls.configs.get('craftingMaterial'):
+                cls.materials_element_tier[i['element'] + str(i['tier'])] = i['slug']
             #build gacha machines
             for i in cls.configs.get('gatchaMachine'):
                 cls.gacha_list[i['slug']] = []
@@ -234,24 +261,80 @@ class GameRule(object):
             log.error('can not load content: %s', e, exc_info=True)
 
     @classmethod
-    def build_gacha_list(cls, data):
-        slugs = []
-        if data['type'] == 'STARS':
-            l = []
-            for star in data['stars']:
-                l.extend(cls.creature_stars[star])
-                slugs.extend(l * data['ratio'])
-        elif data['type'] == 'SLUG':
-            slugs.extend(data['slugs'] * data['ratio'])
-        elif data['type'] == 'SLUG_ELEMENT':
-            pass
-        elif data['type'] == 'FAERIE':
-            l = []
-            for i in cls.configs['faeries']:
-                if i['tier'] == data['tier'] and i['element'] in data['elements']:
-                    l.append(i['slug'])
-            slugs.extend(l * data['ratio'])
-        return slugs
+    def build_eggs_clearance(cls, data):
+        if not data: return data
+        ret = {'loots': [], 'rates':[], 'total':0}
+        for d in data:
+            loot = d.split('-')
+            rate = int(loot[-1])
+            ret['total'] += rate
+            ret['rates'].append(ret['total'])
+            loot[-1] = '100'
+            ret['loots'].append('-'.join(loot))
+        ret['loots'] = cls.build_egg_from_content('', ret['loots'])
+        return ret
+
+    @classmethod
+    def build_egg_from_content(cls, e, data):
+        if not data: return data
+        eggs_map = (e == 'eggs_map')
+        rets = []
+        for d in data:
+            ret = {}
+            d = d.split('-')
+            t = d[0]
+            if t.lower() == cls.FAERIE_EGG.replace('_', '').lower():
+                ret['type'] = cls.FAERIE_EGG
+                if eggs_map:
+                    ret['creature'] = {'slug': d[1]}
+                else:
+                    ret['tier'] = str(d[1])
+                    ret['rate'] = float(d[2])/100
+            elif t.lower() == cls.SELF_EGG.replace('_', '').lower():
+                ret['type'] = cls.SELF_EGG
+                if eggs_map:
+                    ret['creature'] = {'slug': d[1]}
+                else:
+                    ret['rate'] = float(d[1])/100
+            elif t.lower() == cls.MATERIAL_EGG.replace('_', '').lower():
+                ret['type'] = cls.MATERIAL_EGG
+                if eggs_map:
+                    ret['material'] = d[1]
+                else:
+                    sub = d[1].split('_')
+                    ret['element'] = sub[0]
+                    ret['tier'] = str(sub[1])
+                    ret['rate'] = float(d[2])/100
+            elif t.lower() == cls.COIN_EGG.replace('_', '').lower():
+                ret['type'] = cls.COIN_EGG
+                ret['coins'] = int(d[1])
+                ret['rate'] = eggs_map or float(d[2])/100
+            elif t.lower() == cls.GEM_EGG.replace('_', '').lower():
+                ret['type'] = cls.GEM_EGG
+                ret['gems'] = int(d[1])
+                ret['rate'] = eggs_map or float(d[2])/100
+            rets.append(ret)
+        return rets
+
+    # @classmethod
+    # def build_gacha_list(cls, data):
+    #     slugs = []
+    #     if data['type'] == 'STARS':
+    #         l = []
+    #         for star in data['stars']:
+    #             l.extend(cls.creature_stars[star])
+    #             slugs.extend(l * data['ratio'])
+    #     elif data['type'] == 'SLUG':
+    #         slugs.extend(data['slugs'] * data['ratio'])
+    #     elif data['type'] == 'SLUG_ELEMENT':
+    #         pass
+    #     elif data['type'] == 'FAERIE':
+    #         l = []
+    #         for i in cls.configs['faeries']:
+    #             if i['tier'] == data['tier'] and i['element'] in data['elements']:
+    #                 l.append(i['slug'])
+    #         slugs.extend(l * data['ratio'])
+    #     return slugs
 
     @classmethod
     def find_fist_stage(cls, slug, d):
@@ -262,11 +345,16 @@ class GameRule(object):
     @classmethod
     def true_from_ratio(cls, ratio):
         # only support the ratio is percentage
-        return random.randint(0, 100) <= ratio * 100
+        return random.randint(1, 100) <= ratio * 100
 
     @classmethod
     def number_from_range(cls, start, end):
         return random.randint(start, end)
+
+    @classmethod
+    def random_from_number(cls, number):
+        if number < 1: return 0
+        return random.randint(1, number)
 
     @classmethod
     def number_with_ratio(cls, number, ratio, integer=False):
@@ -290,61 +378,41 @@ class GameRule(object):
 
     @classmethod
     def battle_drop_luck_egg(cls, luck):
-        #TODO: need design
-        return True
+        return cls.true_from_ratio(float(luck)/100)
 
     @classmethod
-    def battle_drop_egg(cls, dropper, elements):
-        def teir_from_ratio(level, ratio):
-            start_tier = ratio[0]
-            end_tier = None
-            for i in range(len(ratio)):
-                if ratio[i][0] >= level:
-                    end_tier = ratio[i]
-                    break
-                start_tier = ratio[i]
-            end_tier = end_tier or start_tier
-            tier = start_tier[1]
-            if level >= cls.number_from_range(start_tier[0], end_tier[0]):
-                tier = end_tier[1]
-            return tier
-
-        if not elements: elements = []
-        kind = cls.list_with_ratio(cls.battle_egg_type_ratio)
-        if kind == cls.MATERIAL_EGG:
-            element = cls.random_get_from_list(list(elements) + ['NONE'])
-            if element == 'NONE':
-                tier = teir_from_ratio(dropper.level, cls.material_none_drop_ratio)
+    def battle_drop_egg(cls, droppers, configs, dungeon_reward=False):
+        if not dungeon_reward:
+            if not cls.true_from_ratio(configs['rate']): return None
+            dropper = cls.random_get_from_list(droppers)
+        if configs['type'] == cls.SELF_EGG:
+            if dungeon_reward:
+                slug = configs['creature']['slug']
             else:
-                tier = teir_from_ratio(dropper.level, cls.material_element_drop_ratio)
-            matreial = None
-            #TODO: change this config to be a dict, faster than loop list
-            for i in GameRule.configs['craftingMaterial']:
-                if i['element'] == element and i['tier'] == tier:
-                    matreial = i['slug']
-                    break
-            return {'type': cls.MATERIAL_EGG, 'material': matreial}
-        elif kind == cls.FAERIE_EGG:
-            element = cls.random_get_from_list(list(elements))
-            tier = teir_from_ratio(dropper.level, cls.faerie_drop_ratio)
-            faerie = None
-            #TODO: change this config to be a dict, faster than loop list
-            for i in cls.configs['faeries']:
-                if i['element'] == element and i['tier'] == tier:
-                    faerie =  {'type': cls.FAERIE_EGG,
-                               'creature': {'level': 1, 'slug': i['slug']}}
-                    faerie['creature'].update(i['stats'])
-                    break
-            return faerie
-        elif kind == cls.COIN_EGG:
-            #TODO: how much coin should give
-            coins = cls.number_with_ratio(dropper.level*500, cls.battle_reward_ratio)
-            return {'type': cls.COIN_EGG, 'coins': int(coins)}
-        elif kind == cls.SELF_EGG:
-            slug = cls.creature_first_stage[dropper.slug]
+                slug = cls.creature_first_stage[dropper['slug']]
             return {'type': cls.SELF_EGG, 'creature':
                 {'level': 1, 'slug': slug, 'xp': 0}
             }
+        elif configs['type'] == cls.FAERIE_EGG:
+            if dungeon_reward:
+                f = cls.faerie_types.get(configs['creature']['slug'])
+            else:
+                f = cls.faerie_element_tier.get(dropper['element'] + configs['tier'])
+            faerie = {'type': cls.FAERIE_EGG,
+                               'creature': {'level': 1, 'slug': f['slug']}}
+            faerie['creature'].update(f['stats'])
+            return faerie
+        elif configs['type'] == cls.MATERIAL_EGG:
+            if dungeon_reward:
+                material = configs['material']
+            else:
+                element = 'NONE' if configs['element'] == 'None' else dropper['element']
+                material = cls.materials_element_tier.get(element + configs['tier'])
+            return {'type': cls.MATERIAL_EGG, 'material': material}
+        elif configs['type'] == cls.COIN_EGG:
+            return {'type': cls.COIN_EGG, 'coins': configs['coins']}
+        elif configs['type'] == cls.GEM_EGG:
+            return {'type': cls.GEM_EGG, 'gems': configs['gems']}
         return None
 
     @classmethod

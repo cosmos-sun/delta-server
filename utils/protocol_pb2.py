@@ -19,7 +19,7 @@ _sym_db = _symbol_database.Default()
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='protocol.proto',
   package='gameprotocol.events',
-  serialized_pb=_b('\n\x0eprotocol.proto\x12\x13gameprotocol.events\"\x17\n\x04\x45\x63ho\x12\x0f\n\x07\x63ontent\x18\x01 \x01(\t\"F\n\x0eSimpleResponse\x12\x34\n\x0bresult_code\x18\x01 \x01(\x0e\x32\x1f.gameprotocol.events.ResultCode\"T\n\x06SignUp\x12\x0f\n\x07\x61\x63\x63ount\x18\x01 \x01(\t\x12+\n\x04type\x18\x02 \x01(\x0e\x32\x1d.gameprotocol.events.SignType\x12\x0c\n\x04name\x18\x03 \x01(\t\"G\n\tSignUpRep\x12:\n\x0bresult_code\x18\x01 \x01(\x0e\x32%.gameprotocol.events.SignUpResultCode\"s\n\x06SignIn\x12\x0f\n\x07\x61\x63\x63ount\x18\x01 \x01(\t\x12+\n\x04type\x18\x02 \x01(\x0e\x32\x1d.gameprotocol.events.SignType\x12+\n\x04info\x18\x03 \x01(\x0b\x32\x1d.gameprotocol.events.SignInfo\"\x91\x01\n\tSignInRep\x12:\n\x0bresult_code\x18\x01 \x01(\x0e\x32%.gameprotocol.events.SignInResultCode\x12\x12\n\nsession_id\x18\x02 \x01(\t\x12\x34\n\x0bplayer_info\x18\x03 \x01(\x0b\x32\x1f.gameprotocol.events.PlayerInfo\"\xb0\x01\n\x0cLoginAccount\x12+\n\x04type\x18\x01 \x02(\x0e\x32\x1d.gameprotocol.events.SignType\x12\x11\n\tdevice_id\x18\x02 \x02(\t\x12\x15\n\rpre_device_id\x18\x03 \x01(\t\x12\x0e\n\x06pip_id\x18\x04 \x01(\t\x12+\n\x04info\x18\x05 \x01(\x0b\x32\x1d.gameprotocol.events.SignInfo\x12\x0c\n\x04name\x18\x06 \x01(\t\"\x9d\x01\n\x0fLoginAccountRep\x12@\n\x0bresult_code\x18\x01 \x02(\x0e\x32+.gameprotocol.events.LoginAccountResultCode\x12\x12\n\nsession_id\x18\x02 \x01(\t\x12\x34\n\x0bplayer_info\x18\x03 \x01(\x0b\x32\x1f.gameprotocol.events.PlayerInfo\"]\n\x0bLinkAccount\x12\x11\n\tdevice_id\x18\x01 \x01(\t\x12+\n\x04type\x18\x03 \x01(\x0e\x32\x1d.gameprotocol.events.SignType\x12\x0e\n\x06pip_id\x18\x04 \x01(\t\"Q\n\x0eLinkAccountRep\x12?\n\x0bresult_code\x18\x01 \x01(\x0e\x32*.gameprotocol.events.LinkAccountResultCode\"U\n\nSocialLink\x12\x11\n\tdevice_id\x18\x01 \x01(\t\x12\r\n\x05prefs\x18\x02 \x01(\t\x12\x11\n\tsocial_id\x18\x03 \x01(\t\x12\x12\n\nsession_id\x18\x04 \x01(\t\"\x85\x01\n\rSocialLinkRep\x12>\n\x0bresult_code\x18\x01 \x01(\x0e\x32).gameprotocol.events.SocialLinkResultCode\x12\x34\n\x0bplayer_info\x18\x02 \x01(\x0b\x32\x1f.gameprotocol.events.PlayerInfo\"4\n\x08\x45\x64itTeam\x12(\n\x05teams\x18\x01 \x03(\x0b\x32\x19.gameprotocol.events.Team\"\x0f\n\rRetrieveWorld\"=\n\x10RetrieveWorldRep\x12)\n\x05world\x18\x01 \x01(\x0b\x32\x1a.gameprotocol.events.World\"\x1c\n\x0cRetrieveZone\x12\x0c\n\x04zone\x18\x01 \x01(\t\"*\n\x0cRetrieveArea\x12\x0c\n\x04zone\x18\x01 \x01(\t\x12\x0c\n\x04\x61rea\x18\x02 \x01(\t\"\x16\n\x14RetrieveCreatureType\"O\n\x17RetrieveCreatureTypeRep\x12\x34\n\tcreatures\x18\x01 \x03(\x0b\x32!.gameprotocol.events.CreatureType\"\x12\n\x10GetGlobalConfigs\"Y\n\x0b\x42\x61ttleBegin\x12\x10\n\x08zoneSlug\x18\x01 \x01(\t\x12\x10\n\x08\x61reaSlug\x18\x02 \x01(\t\x12\x13\n\x0b\x64ungeonSlug\x18\x03 \x01(\t\x12\x11\n\tleader_id\x18\x04 \x01(\x05\"\xce\x02\n\x0e\x42\x61ttleBeginRep\x12\x42\n\x0bresult_code\x18\x01 \x02(\x0e\x32-.gameprotocol.events.BattleBeginRepResultCode\x12\n\n\x02xp\x18\x02 \x01(\x05\x12\r\n\x05\x63oins\x18\x03 \x01(\x05\x12+\n\tenemy_egg\x18\x04 \x03(\x0b\x32\x18.gameprotocol.events.Egg\x12*\n\x08\x62oss_egg\x18\x05 \x01(\x0b\x32\x18.gameprotocol.events.Egg\x12+\n\tclear_egg\x18\x06 \x01(\x0b\x32\x18.gameprotocol.events.Egg\x12+\n\tspeed_egg\x18\x07 \x01(\x0b\x32\x18.gameprotocol.events.Egg\x12*\n\x08luck_egg\x18\x08 \x01(\x0b\x32\x18.gameprotocol.events.Egg\"\'\n\tBattleEnd\x12\x0b\n\x03win\x18\x01 \x01(\x08\x12\r\n\x05speed\x18\x02 \x01(\x08\"D\n\x0c\x42\x61ttleEndRep\x12\x34\n\x0bresult_code\x18\x01 \x01(\x0e\x32\x1f.gameprotocol.events.ResultCode\"w\n\x06Helper\x12\x34\n\x0bplayer_info\x18\x01 \x01(\x0b\x32\x1f.gameprotocol.events.PlayerInfo\x12\x37\n\x08\x63reature\x18\x02 \x01(\x0b\x32%.gameprotocol.events.CreatureInstance\"\x0b\n\tGetHelper\"{\n\x0cGetHelperRep\x12=\n\x0bresult_code\x18\x01 \x02(\x0e\x32(.gameprotocol.events.GetHelperResultCode\x12,\n\x07helpers\x18\x02 \x03(\x0b\x32\x1b.gameprotocol.events.Helper\"T\n\x0cModifyFriend\x12\x11\n\tfriend_id\x18\x01 \x02(\x05\x12\x31\n\x06\x61\x63tion\x18\x02 \x02(\x0e\x32!.gameprotocol.events.FriendAction\"\x86\x01\n\x0fModifyFriendRep\x12@\n\x0bresult_code\x18\x01 \x02(\x0e\x32+.gameprotocol.events.ModifyFriendResultCode\x12\x31\n\x06\x61\x63tion\x18\x02 \x02(\x0e\x32!.gameprotocol.events.FriendAction\"\x10\n\x0eGetFriendsInfo\"^\n\nFriendInfo\x12\x34\n\x0bplayer_info\x18\x01 \x02(\x0b\x32\x1f.gameprotocol.events.PlayerInfo\x12\x1a\n\x0bis_favorite\x18\x02 \x01(\x08:\x05\x66\x61lse\"\x89\x02\n\x11GetFriendsInfoRep\x12\x42\n\x0bresult_code\x18\x01 \x02(\x0e\x32-.gameprotocol.events.GetFriendsInfoResultCode\x12\x35\n\x0c\x66riends_list\x18\x02 \x03(\x0b\x32\x1f.gameprotocol.events.FriendInfo\x12:\n\x11send_pending_list\x18\x03 \x03(\x0b\x32\x1f.gameprotocol.events.PlayerInfo\x12=\n\x14receive_pending_list\x18\x04 \x03(\x0b\x32\x1f.gameprotocol.events.PlayerInfo\"u\n\x04\x46use\x12\x35\n\x06target\x18\x01 \x02(\x0b\x32%.gameprotocol.events.CreatureInstance\x12\x36\n\x07\x66\x65\x65\x64\x65rs\x18\x02 \x03(\x0b\x32%.gameprotocol.events.CreatureInstance\"\xaa\x01\n\x07\x46useRep\x12\x38\n\x0bresult_code\x18\x01 \x02(\x0e\x32#.gameprotocol.events.FuseResultCode\x12?\n\x10updated_creature\x18\x02 \x01(\x0b\x32%.gameprotocol.events.CreatureInstance\x12\x12\n\nlack_coins\x18\x03 \x01(\x05\x12\x10\n\x08got_mega\x18\x04 \x01(\x08\"?\n\x06\x45volve\x12\x35\n\x06target\x18\x01 \x02(\x0b\x32%.gameprotocol.events.CreatureInstance\"\x98\x01\n\tEvolveRep\x12:\n\x0bresult_code\x18\x01 \x02(\x0e\x32%.gameprotocol.events.EvolveResultCode\x12;\n\x0cnew_creature\x18\x02 \x01(\x0b\x32%.gameprotocol.events.CreatureInstance\x12\x12\n\nlack_coins\x18\x03 \x01(\x05\"?\n\x06\x41scend\x12\x35\n\x06target\x18\x01 \x02(\x0b\x32%.gameprotocol.events.CreatureInstance\"\x98\x01\n\tAscendRep\x12:\n\x0bresult_code\x18\x01 \x02(\x0e\x32%.gameprotocol.events.AscendResultCode\x12;\n\x0cnew_creature\x18\x02 \x01(\x0b\x32%.gameprotocol.events.CreatureInstance\x12\x12\n\nlack_coins\x18\x03 \x01(\x05\"E\n\x0cSellCreature\x12\x35\n\x06target\x18\x01 \x02(\x0b\x32%.gameprotocol.events.CreatureInstance\"b\n\x0fSellCreatureRep\x12@\n\x0bresult_code\x18\x01 \x02(\x0e\x32+.gameprotocol.events.SellCreatureResultCode\x12\r\n\x05\x63oins\x18\x02 \x01(\x05\"\x0c\n\nGachaTrees\"#\n\rGachaTreesRep\x12\x12\n\ntree_slugs\x18\x01 \x03(\t\"\x1f\n\nGachaShake\x12\x11\n\ttree_slug\x18\x01 \x01(\t\"l\n\rGachaShakeRep\x12\x34\n\x0bresult_code\x18\x01 \x02(\x0e\x32\x1f.gameprotocol.events.ResultCode\x12%\n\x03\x65gg\x18\x02 \x01(\x0b\x32\x18.gameprotocol.events.Egg\"\x0b\n\tAddEnergy\"M\n\x0c\x41\x64\x64\x45nergyRep\x12=\n\x0bresult_code\x18\x01 \x02(\x0e\x32(.gameprotocol.events.AddEnergyResultCode\"\x1f\n\x10\x42uyCreatureSpace\x12\x0b\n\x03num\x18\x01 \x01(\x05\"\x15\n\x13\x42uyCreatureSpaceRep\"\xe4\x03\n\nPlayerInfo\x12\x0e\n\x06userId\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\n\n\x02xp\x18\x03 \x01(\x05\x12(\n\x05teams\x18\x04 \x03(\x0b\x32\x19.gameprotocol.events.Team\x12:\n\x0b\x63reaturebox\x18\x05 \x03(\x0b\x32%.gameprotocol.events.CreatureInstance\x12\x36\n\x0bmaterialbox\x18\x06 \x03(\x0b\x32!.gameprotocol.events.MaterialInfo\x12-\n\x05\x62oost\x18\x07 \x01(\x0b\x32\x1e.gameprotocol.events.BoostInfo\x12\x30\n\x07\x65volves\x18\x08 \x03(\x0b\x32\x1f.gameprotocol.events.EvolveInfo\x12\x32\n\x08missions\x18\t \x03(\x0b\x32 .gameprotocol.events.MissionInst\x12\x14\n\x0c\x61\x63hievements\x18\n \x03(\t\x12\x0c\n\x04gems\x18\x0b \x01(\x05\x12\r\n\x05\x63oins\x18\x0c \x01(\x05\x12\x0e\n\x06hearts\x18\r \x01(\x05\x12\x0e\n\x06\x65nergy\x18\x0e \x01(\x05\x12\x14\n\x0cmaxCreatures\x18\x0f \x01(\x05\x12\x10\n\x08progress\x18\x10 \x01(\x05\"\x1c\n\x04Team\x12\x14\n\x0c\x63reaturesIds\x18\x01 \x03(\x05\"\xb8\x01\n\x10\x43reatureInstance\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0c\n\x04slug\x18\x02 \x01(\t\x12\n\n\x02xp\x18\x03 \x01(\x05\x12\r\n\x05level\x18\x04 \x01(\x05\x12\x0e\n\x06plusHP\x18\x05 \x01(\x05\x12\x12\n\nplusAttack\x18\x06 \x01(\x05\x12\x11\n\tplusSpeed\x18\x07 \x01(\x05\x12\x10\n\x08plusLuck\x18\x08 \x01(\x05\x12%\n\x03\x65gg\x18\t \x01(\x0b\x32\x18.gameprotocol.events.Egg\"\x8b\x01\n\x07\x43\x61pital\x12\x14\n\x0csoftCurrency\x18\x01 \x01(\x05\x12\x14\n\x0chardCurrency\x18\x02 \x01(\x05\x12\x0e\n\x06\x65nergy\x18\x03 \x01(\x05\x12\n\n\x02xp\x18\x04 \x01(\x05\x12\x10\n\x08progress\x18\x05 \x01(\x05\x12&\n\x04\x65ggs\x18\x06 \x03(\x0b\x32\x18.gameprotocol.events.Egg\"\xb7\x01\n\x03\x45gg\x12*\n\x04rank\x18\x01 \x01(\x0e\x32\x1c.gameprotocol.events.EggRank\x12*\n\x04type\x18\x02 \x01(\x0e\x32\x1c.gameprotocol.events.EggType\x12\x37\n\x08\x63reature\x18\x03 \x01(\x0b\x32%.gameprotocol.events.CreatureInstance\x12\x10\n\x08material\x18\x04 \x01(\t\x12\r\n\x05\x63oins\x18\x05 \x01(\x05\"L\n\x0cMaterialInfo\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04tier\x18\x02 \x01(\t\x12\x0f\n\x07\x65lement\x18\x03 \x01(\t\x12\x0f\n\x07\x63vtRate\x18\x04 \x01(\t\"R\n\tBoostInfo\x12\x0e\n\x06\x61ttack\x18\x01 \x01(\x05\x12\r\n\x05speed\x18\x02 \x01(\x05\x12\n\n\x02hp\x18\x03 \x01(\x05\x12\n\n\x02\x63\x64\x18\x04 \x01(\x05\x12\x0e\n\x06\x61iming\x18\x05 \x01(\x05\"<\n\nEvolveInfo\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x0f\n\x07\x65lapsed\x18\x02 \x01(\x05\x12\x0f\n\x07\x65ndtime\x18\x03 \x01(\x05\"+\n\x0bMissionInst\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x10\n\x08progress\x18\x02 \x01(\x05\"\xd6\x04\n\x0c\x43reatureType\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x11\n\tdisplayID\x18\x02 \x01(\x05\x12?\n\nbounceType\x18\x03 \x01(\x0e\x32\x1f.gameprotocol.events.BounceType:\nREFLECTIVE\x12\x0e\n\x06\x62\x61seHP\x18\x04 \x01(\x05\x12\x0f\n\x07levelHP\x18\x05 \x01(\x05\x12\x13\n\x0b\x62\x61seEnemyHP\x18\x06 \x01(\x05\x12\x1a\n\x12levelEnemyHPFactor\x18\x07 \x01(\x02\x12\x12\n\nbaseBossHP\x18\x08 \x01(\x05\x12\x19\n\x11levelBossHPFactor\x18\t \x01(\x02\x12\x12\n\nbaseAttack\x18\n \x01(\x05\x12\x13\n\x0blevelAttack\x18\x0b \x01(\x05\x12\x11\n\tbaseSpeed\x18\x0c \x01(\x02\x12\x12\n\nlevelSpeed\x18\r \x01(\x02\x12\x10\n\x08maxLevel\x18\x0e \x01(\x05\x12\x0c\n\x04luck\x18\x0f \x01(\x05\x12.\n\x04race\x18\x10 \x01(\x0e\x32\x19.gameprotocol.events.Race:\x05HUMAN\x12\x33\n\x07\x65lement\x18\x11 \x01(\x0e\x32\x1c.gameprotocol.events.Element:\x04NONE\x12\x12\n\nstarRating\x18\x12 \x01(\x05\x12\x15\n\revolutionSlug\x18\x13 \x01(\t\x12\x37\n\ttranscend\x18\x14 \x01(\x0b\x32$.gameprotocol.events.TranscendConfig\x12*\n\x06skills\x18\x15 \x03(\x0b\x32\x1a.gameprotocol.events.Skill\"e\n\x0fTranscendConfig\x12\x15\n\rtranscendSlug\x18\x01 \x01(\t\x12;\n\x0e\x63reatureAmount\x18\x02 \x03(\x0b\x32#.gameprotocol.events.CreatureAmount\"6\n\x0e\x43reatureAmount\x12\x14\n\x0c\x63reatureSlug\x18\x01 \x01(\t\x12\x0e\n\x06\x61mount\x18\x02 \x01(\x05\"\x95\x01\n\x05Skill\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x32\n\x07trigger\x18\x02 \x01(\x0b\x32!.gameprotocol.events.SkillTrigger\x12\x30\n\x06\x65\x66\x66\x65\x63t\x18\x03 \x01(\x0b\x32 .gameprotocol.events.SkillEffect\x12\x18\n\x10localizationSlug\x18\x04 \x01(\t\"R\n\x0cSkillTrigger\x12.\n\x04type\x18\x01 \x01(\x0e\x32 .gameprotocol.events.TriggerType\x12\x12\n\nparameters\x18\x02 \x03(\x02\"P\n\x0bSkillEffect\x12-\n\x04type\x18\x01 \x01(\x0e\x32\x1f.gameprotocol.events.EffectType\x12\x12\n\nparameters\x18\x02 \x03(\x02\"?\n\x05World\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12(\n\x05zones\x18\x02 \x03(\x0b\x32\x19.gameprotocol.events.Zone\"\x86\x01\n\x04Zone\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x31\n\x0brequirement\x18\x03 \x01(\x0b\x32\x1c.gameprotocol.events.Capital\x12(\n\x05\x61reas\x18\x04 \x03(\x0b\x32\x19.gameprotocol.events.Area\"\x8c\x01\n\x04\x41rea\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x31\n\x0brequirement\x18\x03 \x01(\x0b\x32\x1c.gameprotocol.events.Capital\x12.\n\x08\x64ungeons\x18\x04 \x03(\x0b\x32\x1c.gameprotocol.events.Dungeon\"\xdd\x01\n\x07\x44ungeon\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x31\n\x0brequirement\x18\x03 \x01(\x0b\x32\x1c.gameprotocol.events.Capital\x12(\n\x05waves\x18\x04 \x03(\x0b\x32\x19.gameprotocol.events.Wave\x12,\n\x06reward\x18\x05 \x01(\x0b\x32\x1c.gameprotocol.events.Capital\x12\x12\n\nbackground\x18\x06 \x01(\t\x12\x10\n\x08\x65lements\x18\x07 \x03(\t\"\xa7\x01\n\x04Wave\x12\x0e\n\x06layout\x18\x01 \x01(\t\x12\x13\n\x0b\x65nvironment\x18\x02 \x01(\t\x12\r\n\x05\x61rena\x18\x03 \x01(\t\x12\x36\n\x07\x65nemies\x18\x04 \x03(\x0b\x32%.gameprotocol.events.CreatureInstance\x12\x33\n\x04\x62oss\x18\x05 \x01(\x0b\x32%.gameprotocol.events.CreatureInstance\"]\n\x0bMissionInfo\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x11\n\tcondition\x18\x02 \x01(\t\x12-\n\x07rewards\x18\x03 \x01(\x0b\x32\x1c.gameprotocol.events.Capital\"U\n\x08SignInfo\x12\x12\n\ndeviceMode\x18\x01 \x01(\t\x12\x12\n\ndeviceName\x18\x02 \x01(\t\x12\x11\n\tdeviceUid\x18\x03 \x01(\t\x12\x0e\n\x06osName\x18\x04 \x01(\t\"\x88\x01\n\x12ResourceDefinition\x12/\n\x04type\x18\x01 \x01(\x0e\x32!.gameprotocol.events.ResourceType\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x14\n\x0c\x66\x61llbackName\x18\x03 \x01(\t\x12\x0c\n\x04path\x18\x04 \x01(\t\x12\x0f\n\x07version\x18\x05 \x01(\t\"\x18\n\x16ResourceUpdaterRequest\"L\n\x13ResourceUpdaterList\x12\x35\n\x04list\x18\x01 \x03(\x0b\x32\'.gameprotocol.events.ResourceDefinition\"\xee\x03\n\rGlobalConfigs\x12?\n\x0bplayerLevel\x18\x01 \x03(\x0b\x32*.gameprotocol.events.PlayerLevelDefinition\x12I\n\x10\x63raftingMaterial\x18\x02 \x03(\x0b\x32/.gameprotocol.events.CraftingMaterialDefinition\x12\x45\n\x13\x65volutionDefinition\x18\x03 \x03(\x0b\x32(.gameprotocol.events.EvolutionDefinition\x12\x37\n\x0c\x66usingParams\x18\x04 \x01(\x0b\x32!.gameprotocol.events.FusingParams\x12\x39\n\rsellingParams\x18\x05 \x01(\x0b\x32\".gameprotocol.events.SellingParams\x12\x18\n\x10starRankMaxLevel\x18\x06 \x03(\x05\x12\x45\n\x13\x63reatureLevelParams\x18\x07 \x01(\x0b\x32(.gameprotocol.events.CreatureLevelParams\x12\x35\n\x07\x66\x61\x65ries\x18\x08 \x03(\x0b\x32$.gameprotocol.events.FaeryDefinition\"J\n\x15PlayerLevelDefinition\x12\n\n\x02xp\x18\x01 \x01(\x05\x12\x11\n\tmaxEnergy\x18\x02 \x01(\x05\x12\x12\n\nmaxFriends\x18\x03 \x01(\x05\"\xa1\x01\n\x1a\x43raftingMaterialDefinition\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x0c\n\x04tier\x18\x02 \x01(\x05\x12-\n\x07\x65lement\x18\x03 \x01(\x0e\x32\x1c.gameprotocol.events.Element\x12\x38\n\nconversion\x18\x04 \x03(\x0b\x32$.gameprotocol.events.CMaterialAmount\"\xbb\x01\n\x13\x45volutionDefinition\x12\x14\n\x0c\x66romStarRank\x18\x01 \x01(\x05\x12\x32\n\x04\x63ost\x18\x02 \x03(\x0b\x32$.gameprotocol.events.CMaterialAmount\x12\x44\n\relementalCost\x18\x03 \x03(\x0b\x32-.gameprotocol.events.CElementalMaterialAmount\x12\x14\n\x0csoftCurrency\x18\x04 \x01(\x05\".\n\x0f\x43MaterialAmount\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\r\n\x05\x63ount\x18\x02 \x01(\x05\"7\n\x18\x43\x45lementalMaterialAmount\x12\x0c\n\x04tier\x18\x01 \x01(\x05\x12\r\n\x05\x63ount\x18\x02 \x01(\x05\"\xf6\x03\n\x0c\x46usingParams\x12\x14\n\x0cxpGainParamA\x18\x01 \x01(\x02\x12\x14\n\x0cxpGainParamB\x18\x02 \x01(\x02\x12\x14\n\x0cxpGainParamC\x18\x03 \x01(\x02\x12\x14\n\x0cxpGainParamD\x18\x04 \x01(\x02\x12\x1e\n\x16softCurrencyCostParamA\x18\x05 \x01(\x02\x12\x1e\n\x16softCurrencyCostParamB\x18\x06 \x01(\x02\x12\x1e\n\x16softCurrencyCostParamC\x18\x07 \x01(\x02\x12\x1e\n\x16megaFusionChanceParamA\x18\x08 \x01(\x02\x12\x1e\n\x16megaFusionChanceParamB\x18\t \x01(\x02\x12\x1b\n\x13plusHPInheritParamA\x18\n \x01(\x02\x12\x1b\n\x13plusHPInheritParamB\x18\x0b \x01(\x02\x12\x1c\n\x14plusAtkInheritParamA\x18\x0c \x01(\x02\x12\x1c\n\x14plusAtkInheritParamB\x18\r \x01(\x02\x12\x1c\n\x14plusSpdInheritParamA\x18\x0e \x01(\x02\x12\x1c\n\x14plusSpdInheritParamB\x18\x0f \x01(\x02\x12\x1d\n\x15plusLuckInheritParamA\x18\x10 \x01(\x02\x12\x1d\n\x15plusLuckInheritParamB\x18\x11 \x01(\x02\"?\n\rSellingParams\x12\x0e\n\x06paramA\x18\x01 \x01(\x02\x12\x0e\n\x06paramB\x18\x02 \x01(\x02\x12\x0e\n\x06paramC\x18\x03 \x01(\x02\"t\n\x13\x43reatureLevelParams\x12\x1b\n\x13xpIncrementPerLevel\x18\x01 \x01(\x02\x12\x15\n\rstarRankScale\x18\x02 \x01(\x02\x12\x12\n\nlevelScale\x18\x03 \x01(\x02\x12\x15\n\rlevelExponent\x18\x04 \x01(\x02\"\x8b\x01\n\x0f\x46\x61\x65ryDefinition\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x0c\n\x04tier\x18\x02 \x01(\x05\x12-\n\x07\x65lement\x18\x03 \x01(\x0e\x32\x1c.gameprotocol.events.Element\x12-\n\x05stats\x18\x04 \x01(\x0b\x32\x1e.gameprotocol.events.FaeryStat\"q\n\tFaeryStat\x12\x0e\n\x06plusHP\x18\x01 \x01(\x05\x12\x0f\n\x07plusAtk\x18\x02 \x01(\x05\x12\x0f\n\x07plusSpd\x18\x03 \x01(\x02\x12\x10\n\x08plusLuck\x18\x04 \x01(\x05\x12\x14\n\x0csoftCurrency\x18\x05 \x01(\x05\x12\n\n\x02xp\x18\x06 \x01(\x05\"i\n\x0bProductInfo\x12\x0b\n\x03pid\x18\x01 \x01(\t\x12\x0c\n\x04slug\x18\x03 \x01(\t\x12\x0c\n\x04\x64\x65sc\x18\x04 \x01(\t\x12\x10\n\x08quantity\x18\x05 \x01(\x05\x12\r\n\x05price\x18\x06 \x01(\x05\x12\x10\n\x08\x63urrency\x18\x07 \x01(\x05\"\r\n\x0bProductsReq\"\x7f\n\x0cProductsResp\x12;\n\x0bresult_code\x18\x01 \x01(\x0e\x32&.gameprotocol.events.GET_PRODUCTS_CODE\x12\x32\n\x08products\x18\x02 \x03(\x0b\x32 .gameprotocol.events.ProductInfo\"+\n\x0bPurchaseReq\x12\x0b\n\x03pid\x18\x01 \x01(\t\x12\x0f\n\x07receipt\x18\x02 \x01(\t\"\xb9\x01\n\x0fTransactionInfo\x12>\n\x0bresult_code\x18\x01 \x01(\x0e\x32).gameprotocol.events.PURCHASE_RESULT_CODE\x12\x0f\n\x07receipt\x18\x02 \x01(\t\x12\x10\n\x08order_id\x18\x03 \x01(\t\x12\x0b\n\x03msg\x18\x04 \x01(\t\x12\x36\n\x0cproduct_Info\x18\x05 \x01(\x0b\x32 .gameprotocol.events.ProductInfo\"I\n\x0cPurchaseResp\x12\x39\n\x0btrans_infos\x18\x01 \x03(\x0b\x32$.gameprotocol.events.TransactionInfo*:\n\nResultCode\x12\x0b\n\x07SUCCESS\x10\x01\x12\n\n\x06\x46\x41ILED\x10\x02\x12\x13\n\x0fINVALID_SESSION\x10\x65*\x94\x01\n\x18\x42\x61ttleBeginRepResultCode\x12\x18\n\x14\x42\x41TTLE_BEGIN_SUCCESS\x10\x00\x12\x1e\n\x1a\x42\x41TTLE_BEGIN_FAIL_PROGRESS\x10\x01\x12\x1c\n\x18\x42\x41TTLE_BEGIN_FAIL_ENERGY\x10\x02\x12 \n\x1c\x42\x41TTLE_BEGIN_INVALID_SESSION\x10\x65*Q\n\x08SignType\x12\t\n\x05\x45MPTY\x10\x00\x12\t\n\x05\x41PPLE\x10\x01\x12\n\n\x06GOOGLE\x10\x02\x12\x0c\n\x08\x46\x41\x43\x45\x42OOK\x10\x03\x12\t\n\x05\x45MAIL\x10\x04\x12\n\n\x06\x44\x45VICE\x10\x05*v\n\x10SignUpResultCode\x12\x12\n\x0eSIGNUP_SUCCESS\x10\x00\x12\x18\n\x14\x44UPLICATE_ACCOUNT_ID\x10\x01\x12\x17\n\x13MISSING_SIGNUP_TYPE\x10\x02\x12\x1b\n\x0eSIGHUP_UNKNOWN\x10\xff\xff\xff\xff\xff\xff\xff\xff\xff\x01*s\n\x10SignInResultCode\x12\x12\n\x0eSIGNIN_SUCCESS\x10\x00\x12\x14\n\x10PLAYER_NOT_EXIST\x10\x01\x12\x18\n\x14MISSING_SIGN_IN_TYPE\x10\x02\x12\x1b\n\x0eSIGNIN_UNKNOWN\x10\xff\xff\xff\xff\xff\xff\xff\xff\xff\x01*\x93\x01\n\x16LoginAccountResultCode\x12\x15\n\x11LOGIN_ACC_SUCCESS\x10\x00\x12\x1f\n\x1bLOGIN_ACC_MISSING_SIGN_TYPE\x10\x01\x12 \n\x1cLOGIN_ACC_DISABLED_SIGN_TYPE\x10\x02\x12\x1f\n\x1bLOGIN_ACC_MISSING_DEVICE_ID\x10\x03*G\n\x15LinkAccountResultCode\x12\x1a\n\x16LINK_ACC_DIFFERENT_PIP\x10\x01\x12\x12\n\x0eLINK_ACC_OTHER\x10\x02*H\n\x14SocialLinkResultCode\x12\x11\n\rSL_NEW_SOCIAL\x10\x00\x12\x0b\n\x07SL_SAME\x10\x01\x12\x10\n\x0cSL_DIFFERENT\x10\x02*9\n\nBounceType\x12\x0e\n\nREFLECTIVE\x10\x00\x12\x0f\n\x0bPASSTHROUGH\x10\x01\x12\n\n\x06\x42OUNCE\x10\x02*U\n\x04Race\x12\t\n\x05HUMAN\x10\x00\x12\x0e\n\nLIVINGITEM\x10\x01\x12\n\n\x06\x41NIMAL\x10\x02\x12\x07\n\x03\x45LF\x10\x03\x12\n\n\x06\x44RAGON\x10\x04\x12\x11\n\rFEED_CREATURE\x10\x05*G\n\x07\x45lement\x12\x08\n\x04NONE\x10\x00\x12\x08\n\x04\x46IRE\x10\x01\x12\t\n\x05WATER\x10\x02\x12\x08\n\x04WOOD\x10\x03\x12\x08\n\x04\x44\x41RK\x10\x04\x12\t\n\x05LIGHT\x10\x05*\x7f\n\x0c\x46riendAction\x12\x0e\n\nADD_FRIEND\x10\x01\x12\x11\n\rACCEPT_FRIEND\x10\x02\x12\x11\n\rIGNORE_FRIEND\x10\x03\x12\x11\n\rREMOVE_FRIEND\x10\x04\x12\x11\n\rMARK_FAVORITE\x10\x05\x12\x13\n\x0fUNMARK_FAVORITE\x10\x06*\x8d\x03\n\x16ModifyFriendResultCode\x12\x12\n\x0eMODIFY_SUCCESS\x10\x00\x12\x16\n\x12UNSUPPORTED_ACTION\x10\x01\x12\x12\n\x0e\x46RIEND_ON_SELF\x10\x02\x12\x14\n\x10\x46RIEND_NOT_EXIST\x10\x03\x12\x11\n\rFRIEND_FRIEND\x10\x04\x12\x12\n\x0e\x46RIEND_SENDING\x10\x05\x12\x14\n\x10\x46RIEND_RECEIVING\x10\x06\x12\x18\n\x14\x41\x43\x43\x45PT_NOT_RECEIVING\x10\x07\x12\x18\n\x14IGNORE_NOT_RECEIVING\x10\x08\x12\x13\n\x0fREMOVE_STRANGER\x10\t\x12\x15\n\x11\x46\x41VORITE_STRANGER\x10\n\x12\x15\n\x11\x46\x41VORITE_FAVORITE\x10\x0b\x12\x1b\n\x17UNFAVORITE_NOT_FAVORITE\x10\x0c\x12\x14\n\x10SELF_REACH_LIMIT\x10\r\x12\x13\n\x0fOPP_REACH_LIMIT\x10\x0e\x12!\n\x1dMODIFY_FRIEND_INVALID_SESSION\x10\x65*\\\n\x18GetFriendsInfoResultCode\x12\x1b\n\x17GET_FRIEND_INFO_SUCCESS\x10\x00\x12#\n\x1fGET_FRIEND_INFO_INVALID_SESSION\x10\x65*M\n\x13GetHelperResultCode\x12\x16\n\x12GET_HELPER_SUCCESS\x10\x00\x12\x1e\n\x1aGET_HELPER_INVALID_SESSION\x10\x65*\xe9\x01\n\x0e\x46useResultCode\x12\x10\n\x0c\x46USE_SUCCESS\x10\x00\x12\x17\n\x13\x46USE_MISSING_TARGET\x10\x01\x12\x19\n\x15\x46USE_TARGET_NOT_EXIST\x10\x02\x12\x13\n\x0f\x46USE_NO_FEEDERS\x10\x03\x12\x19\n\x15\x46USE_FEEDER_NOT_EXIST\x10\x04\x12\x16\n\x12\x46USE_FEEDER_IN_USE\x10\x05\x12\x14\n\x10\x46USE_FEEDER_SELF\x10\x06\x12\x19\n\x15\x46USE_NOT_ENOUGH_COINS\x10\x07\x12\x18\n\x14\x46USE_INVALID_SESSION\x10\x65*\xe3\x01\n\x10\x45volveResultCode\x12\x12\n\x0e\x45VOLVE_SUCCESS\x10\x00\x12\x19\n\x15\x45VOLVE_MISSING_TARGET\x10\x01\x12\x12\n\x0e\x45VOLVE_DISABLE\x10\x02\x12\x1b\n\x17\x45VOLVE_TARGET_NOT_EXIST\x10\x03\x12\x1c\n\x18\x45VOLVE_LEVEL_UNSATISFIED\x10\x04\x12\x18\n\x14\x45VOLVE_LACK_MATERIAL\x10\x05\x12\x1b\n\x17\x45VOLVE_NOT_ENOUGH_COINS\x10\x06\x12\x1a\n\x16\x45VOLVE_INVALID_SESSION\x10\x65*\xe4\x01\n\x10\x41scendResultCode\x12\x12\n\x0e\x41SCEND_SUCCESS\x10\x00\x12\x19\n\x15\x41SCEND_MISSING_TARGET\x10\x01\x12\x12\n\x0e\x41SCEND_DISABLE\x10\x02\x12\x1b\n\x17\x41SCEND_TARGET_NOT_EXIST\x10\x03\x12\x1c\n\x18\x41SCEND_LEVEL_UNSATISFIED\x10\x04\x12\x19\n\x15\x41SCEND_MISSING_FEEDER\x10\x05\x12\x1b\n\x17\x41SCEND_NOT_ENOUGH_COINS\x10\x06\x12\x1a\n\x16\x41SCEND_INVALID_SESSION\x10\x65*\x90\x01\n\x16SellCreatureResultCode\x12\x10\n\x0cSOLD_SUCCESS\x10\x00\x12\x17\n\x13SELL_MISSING_TARGET\x10\x01\x12\x19\n\x15SELL_TARGET_NOT_EXIST\x10\x02\x12\x16\n\x12SELL_TARGET_IN_USE\x10\x03\x12\x18\n\x14SELL_INVALID_SESSION\x10\x65*m\n\x13\x41\x64\x64\x45nergyResultCode\x12\x16\n\x12\x41\x44\x44_ENERGY_SUCCESS\x10\x00\x12\x1e\n\x1a\x41\x44\x44_ENERGY_NOT_ENOUGH_GEMS\x10\x01\x12\x1e\n\x1a\x41\x44\x44_ENERGY_INVALID_SESSION\x10\x65*+\n\x07\x45ggRank\x12\n\n\x06NORMAL\x10\x01\x12\n\n\x06SILVER\x10\x02\x12\x08\n\x04GOLD\x10\x03*G\n\x07\x45ggType\x12\x0e\n\nFAERIE_EGG\x10\x01\x12\x0c\n\x08SELF_EGG\x10\x02\x12\x10\n\x0cMATERIAL_EGG\x10\x03\x12\x0c\n\x08\x43OIN_EGG\x10\x04*\xf4\x01\n\x0bTriggerType\x12\x11\n\rONHITBYFRIEND\x10\x01\x12\x0f\n\x0bONHITFRIEND\x10\x02\x12\x0e\n\nONACTIVATE\x10\x03\x12\x0e\n\nONHITENEMY\x10\x04\x12\x0f\n\x0bONHITBORDER\x10\x05\x12\x0f\n\x0bONCOMPUTEHP\x10\x06\x12\x13\n\x0fONCOMPUTEATTACK\x10\x07\x12\x12\n\x0eONCOMPUTESPEED\x10\x08\x12\x12\n\x0eONCOMPUTEMAXXP\x10\t\x12\x11\n\rONENEMYATTACK\x10\n\x12\x0b\n\x07ONSPAWN\x10\x0b\x12\x10\n\x0cONSPAWNENEMY\x10\x0c\x12\x10\n\x0cONENEMYSPAWN\x10\r*\xd7\x02\n\nEffectType\x12\x11\n\rSHOOTVERTICAL\x10\x01\x12\x13\n\x0fSHOOTHORIZONTAL\x10\x02\x12\x11\n\rSHOOTDIAGONAL\x10\x03\x12\x16\n\x12SHOOTALLDIRECTIONS\x10\x04\x12\x10\n\x0cSHOOTNEAREST\x10\x05\x12\x0f\n\x0bSHOOTRANDOM\x10\x06\x12\x08\n\x04HEAL\x10\x07\x12\x10\n\x0cQUADINCREASE\x10\x08\x12\x10\n\x0cSQRTINCREASE\x10\t\x12\x12\n\x0eSTICKANDLASERS\x10\n\x12\t\n\x05\x42LAST\x10\x0b\x12\x07\n\x03GAR\x10\x0c\x12\x0b\n\x07\x45XLASER\x10\r\x12\x0f\n\x0b\x42OSSEXLASER\x10\x0e\x12\r\n\tBOSSBLAST\x10\x0f\x12\x0b\n\x07\x42OSSGAR\x10\x10\x12\x10\n\x0c\x45NHANCESPEED\x10\x11\x12\x0e\n\nSPREADSHOT\x10\x12\x12\x0e\n\nSUPERBLAST\x10\x13\x12\x11\n\rENHANCEATTACK\x10\x14*v\n\x0cResourceType\x12\x0c\n\x08REQUIRED\x10\x01\x12\x0c\n\x08OPTIONAL\x10\x02\x12\x0e\n\nOVERRIDING\x10\x03\x12\x0e\n\nMEMORYONLY\x10\x04\x12\x17\n\x13OPTIONAL_OVERRIDING\x10\x05\x12\x11\n\rBUILTINCLIENT\x10\x06*\x1f\n\x07OS_TYPE\x12\x07\n\x03IOS\x10\x01\x12\x0b\n\x07\x41ndroid\x10\x02*\x80\x01\n\x11GET_PRODUCTS_CODE\x12\x18\n\x14GET_PRODUCTS_SUCCESS\x10\x00\x12\x18\n\x14NOT_SUPPORTED_DEVICE\x10\x01\x12\x15\n\x11INVALID_PLAYER_ID\x10\x02\x12 \n\x1cGET_PRODUCTS_INVALID_SESSION\x10\x03*\xe4\x01\n\x14PURCHASE_RESULT_CODE\x12\x15\n\x11SUCCESS_PURCHASED\x10\x00\x12\x12\n\x0eSUCCESS_UNPAID\x10\x01\x12\x16\n\x12\x44UPLICATE_PURCHASE\x10\x02\x12\x0e\n\nAPPLE_BUSY\x10\x03\x12\x16\n\x12INVALID_PRODUCT_ID\x10\x04\x12\r\n\tDUPLICATE\x10\x05\x12\r\n\tIAP_THIEF\x10\x06\x12\x0f\n\x0bIAB_CHEATER\x10\x07\x12\x1c\n\x18PURCHASE_INVALID_SESSION\x10\x65\x12\x14\n\x07UNKNOWN\x10\xff\xff\xff\xff\xff\xff\xff\xff\xff\x01')
+  serialized_pb=_b('\n\x0eprotocol.proto\x12\x13gameprotocol.events\"\x17\n\x04\x45\x63ho\x12\x0f\n\x07\x63ontent\x18\x01 \x01(\t\"F\n\x0eSimpleResponse\x12\x34\n\x0bresult_code\x18\x01 \x01(\x0e\x32\x1f.gameprotocol.events.ResultCode\"T\n\x06SignUp\x12\x0f\n\x07\x61\x63\x63ount\x18\x01 \x01(\t\x12+\n\x04type\x18\x02 \x01(\x0e\x32\x1d.gameprotocol.events.SignType\x12\x0c\n\x04name\x18\x03 \x01(\t\"G\n\tSignUpRep\x12:\n\x0bresult_code\x18\x01 \x01(\x0e\x32%.gameprotocol.events.SignUpResultCode\"s\n\x06SignIn\x12\x0f\n\x07\x61\x63\x63ount\x18\x01 \x01(\t\x12+\n\x04type\x18\x02 \x01(\x0e\x32\x1d.gameprotocol.events.SignType\x12+\n\x04info\x18\x03 \x01(\x0b\x32\x1d.gameprotocol.events.SignInfo\"\x91\x01\n\tSignInRep\x12:\n\x0bresult_code\x18\x01 \x01(\x0e\x32%.gameprotocol.events.SignInResultCode\x12\x12\n\nsession_id\x18\x02 \x01(\t\x12\x34\n\x0bplayer_info\x18\x03 \x01(\x0b\x32\x1f.gameprotocol.events.PlayerInfo\"\xb0\x01\n\x0cLoginAccount\x12+\n\x04type\x18\x01 \x02(\x0e\x32\x1d.gameprotocol.events.SignType\x12\x11\n\tdevice_id\x18\x02 \x02(\t\x12\x15\n\rpre_device_id\x18\x03 \x01(\t\x12\x0e\n\x06pip_id\x18\x04 \x01(\t\x12+\n\x04info\x18\x05 \x01(\x0b\x32\x1d.gameprotocol.events.SignInfo\x12\x0c\n\x04name\x18\x06 \x01(\t\"\x9d\x01\n\x0fLoginAccountRep\x12@\n\x0bresult_code\x18\x01 \x02(\x0e\x32+.gameprotocol.events.LoginAccountResultCode\x12\x12\n\nsession_id\x18\x02 \x01(\t\x12\x34\n\x0bplayer_info\x18\x03 \x01(\x0b\x32\x1f.gameprotocol.events.PlayerInfo\"]\n\x0bLinkAccount\x12\x11\n\tdevice_id\x18\x01 \x01(\t\x12+\n\x04type\x18\x03 \x01(\x0e\x32\x1d.gameprotocol.events.SignType\x12\x0e\n\x06pip_id\x18\x04 \x01(\t\"Q\n\x0eLinkAccountRep\x12?\n\x0bresult_code\x18\x01 \x01(\x0e\x32*.gameprotocol.events.LinkAccountResultCode\"U\n\nSocialLink\x12\x11\n\tdevice_id\x18\x01 \x01(\t\x12\r\n\x05prefs\x18\x02 \x01(\t\x12\x11\n\tsocial_id\x18\x03 \x01(\t\x12\x12\n\nsession_id\x18\x04 \x01(\t\"\x85\x01\n\rSocialLinkRep\x12>\n\x0bresult_code\x18\x01 \x01(\x0e\x32).gameprotocol.events.SocialLinkResultCode\x12\x34\n\x0bplayer_info\x18\x02 \x01(\x0b\x32\x1f.gameprotocol.events.PlayerInfo\"4\n\x08\x45\x64itTeam\x12(\n\x05teams\x18\x01 \x03(\x0b\x32\x19.gameprotocol.events.Team\"\x0f\n\rRetrieveWorld\"=\n\x10RetrieveWorldRep\x12)\n\x05world\x18\x01 \x01(\x0b\x32\x1a.gameprotocol.events.World\"\x1c\n\x0cRetrieveZone\x12\x0c\n\x04zone\x18\x01 \x01(\t\"*\n\x0cRetrieveArea\x12\x0c\n\x04zone\x18\x01 \x01(\t\x12\x0c\n\x04\x61rea\x18\x02 \x01(\t\"\x16\n\x14RetrieveCreatureType\"O\n\x17RetrieveCreatureTypeRep\x12\x34\n\tcreatures\x18\x01 \x03(\x0b\x32!.gameprotocol.events.CreatureType\"\x12\n\x10GetGlobalConfigs\"Y\n\x0b\x42\x61ttleBegin\x12\x10\n\x08zoneSlug\x18\x01 \x01(\t\x12\x10\n\x08\x61reaSlug\x18\x02 \x01(\t\x12\x13\n\x0b\x64ungeonSlug\x18\x03 \x01(\t\x12\x11\n\tleader_id\x18\x04 \x01(\x05\"\x85\x03\n\x0e\x42\x61ttleBeginRep\x12\x42\n\x0bresult_code\x18\x01 \x02(\x0e\x32-.gameprotocol.events.BattleBeginRepResultCode\x12\n\n\x02xp\x18\x02 \x01(\x05\x12\r\n\x05\x63oins\x18\x03 \x01(\x05\x12+\n\tenemy_egg\x18\x04 \x03(\x0b\x32\x18.gameprotocol.events.Egg\x12*\n\x08\x62oss_egg\x18\x05 \x03(\x0b\x32\x18.gameprotocol.events.Egg\x12+\n\tclear_egg\x18\x06 \x01(\x0b\x32\x18.gameprotocol.events.Egg\x12\x33\n\tspeed_egg\x18\x07 \x03(\x0b\x32 .gameprotocol.events.ComposedEgg\x12*\n\x08luck_egg\x18\x08 \x01(\x0b\x32\x18.gameprotocol.events.Egg\x12-\n\x0b\x64ungeon_egg\x18\t \x03(\x0b\x32\x18.gameprotocol.events.Egg\"`\n\tBattleEnd\x12\x10\n\x08zoneSlug\x18\x01 \x01(\t\x12\x10\n\x08\x61reaSlug\x18\x02 \x01(\t\x12\x13\n\x0b\x64ungeonSlug\x18\x03 \x01(\t\x12\x0b\n\x03win\x18\x04 \x01(\x08\x12\r\n\x05turns\x18\x05 \x01(\x05\"D\n\x0c\x42\x61ttleEndRep\x12\x34\n\x0bresult_code\x18\x01 \x01(\x0e\x32\x1f.gameprotocol.events.ResultCode\"w\n\x06Helper\x12\x34\n\x0bplayer_info\x18\x01 \x01(\x0b\x32\x1f.gameprotocol.events.PlayerInfo\x12\x37\n\x08\x63reature\x18\x02 \x01(\x0b\x32%.gameprotocol.events.CreatureInstance\"\x0b\n\tGetHelper\"{\n\x0cGetHelperRep\x12=\n\x0bresult_code\x18\x01 \x02(\x0e\x32(.gameprotocol.events.GetHelperResultCode\x12,\n\x07helpers\x18\x02 \x03(\x0b\x32\x1b.gameprotocol.events.Helper\"T\n\x0cModifyFriend\x12\x11\n\tfriend_id\x18\x01 \x02(\x05\x12\x31\n\x06\x61\x63tion\x18\x02 \x02(\x0e\x32!.gameprotocol.events.FriendAction\"\x86\x01\n\x0fModifyFriendRep\x12@\n\x0bresult_code\x18\x01 \x02(\x0e\x32+.gameprotocol.events.ModifyFriendResultCode\x12\x31\n\x06\x61\x63tion\x18\x02 \x02(\x0e\x32!.gameprotocol.events.FriendAction\"\x10\n\x0eGetFriendsInfo\"^\n\nFriendInfo\x12\x34\n\x0bplayer_info\x18\x01 \x02(\x0b\x32\x1f.gameprotocol.events.PlayerInfo\x12\x1a\n\x0bis_favorite\x18\x02 \x01(\x08:\x05\x66\x61lse\"\x89\x02\n\x11GetFriendsInfoRep\x12\x42\n\x0bresult_code\x18\x01 \x02(\x0e\x32-.gameprotocol.events.GetFriendsInfoResultCode\x12\x35\n\x0c\x66riends_list\x18\x02 \x03(\x0b\x32\x1f.gameprotocol.events.FriendInfo\x12:\n\x11send_pending_list\x18\x03 \x03(\x0b\x32\x1f.gameprotocol.events.PlayerInfo\x12=\n\x14receive_pending_list\x18\x04 \x03(\x0b\x32\x1f.gameprotocol.events.PlayerInfo\"u\n\x04\x46use\x12\x35\n\x06target\x18\x01 \x02(\x0b\x32%.gameprotocol.events.CreatureInstance\x12\x36\n\x07\x66\x65\x65\x64\x65rs\x18\x02 \x03(\x0b\x32%.gameprotocol.events.CreatureInstance\"\xaa\x01\n\x07\x46useRep\x12\x38\n\x0bresult_code\x18\x01 \x02(\x0e\x32#.gameprotocol.events.FuseResultCode\x12?\n\x10updated_creature\x18\x02 \x01(\x0b\x32%.gameprotocol.events.CreatureInstance\x12\x12\n\nlack_coins\x18\x03 \x01(\x05\x12\x10\n\x08got_mega\x18\x04 \x01(\x08\"?\n\x06\x45volve\x12\x35\n\x06target\x18\x01 \x02(\x0b\x32%.gameprotocol.events.CreatureInstance\"\x98\x01\n\tEvolveRep\x12:\n\x0bresult_code\x18\x01 \x02(\x0e\x32%.gameprotocol.events.EvolveResultCode\x12;\n\x0cnew_creature\x18\x02 \x01(\x0b\x32%.gameprotocol.events.CreatureInstance\x12\x12\n\nlack_coins\x18\x03 \x01(\x05\"?\n\x06\x41scend\x12\x35\n\x06target\x18\x01 \x02(\x0b\x32%.gameprotocol.events.CreatureInstance\"\x98\x01\n\tAscendRep\x12:\n\x0bresult_code\x18\x01 \x02(\x0e\x32%.gameprotocol.events.AscendResultCode\x12;\n\x0cnew_creature\x18\x02 \x01(\x0b\x32%.gameprotocol.events.CreatureInstance\x12\x12\n\nlack_coins\x18\x03 \x01(\x05\"E\n\x0cSellCreature\x12\x35\n\x06target\x18\x01 \x02(\x0b\x32%.gameprotocol.events.CreatureInstance\"b\n\x0fSellCreatureRep\x12@\n\x0bresult_code\x18\x01 \x02(\x0e\x32+.gameprotocol.events.SellCreatureResultCode\x12\r\n\x05\x63oins\x18\x02 \x01(\x05\"\x0c\n\nGachaTrees\"#\n\rGachaTreesRep\x12\x12\n\ntree_slugs\x18\x01 \x03(\t\"\x1f\n\nGachaShake\x12\x11\n\ttree_slug\x18\x01 \x01(\t\"l\n\rGachaShakeRep\x12\x34\n\x0bresult_code\x18\x01 \x02(\x0e\x32\x1f.gameprotocol.events.ResultCode\x12%\n\x03\x65gg\x18\x02 \x01(\x0b\x32\x18.gameprotocol.events.Egg\"\x0b\n\tAddEnergy\"M\n\x0c\x41\x64\x64\x45nergyRep\x12=\n\x0bresult_code\x18\x01 \x02(\x0e\x32(.gameprotocol.events.AddEnergyResultCode\"\x12\n\x10\x42uyCreatureSpace\"[\n\x13\x42uyCreatureSpaceRep\x12\x44\n\x0bresult_code\x18\x01 \x02(\x0e\x32/.gameprotocol.events.BuyCreatureSpaceResultCode\"E\n\x0f\x43onvertMaterial\x12\x11\n\tfrom_slug\x18\x01 \x01(\t\x12\x0f\n\x07to_slug\x18\x02 \x01(\t\x12\x0e\n\x06\x61mount\x18\x03 \x01(\x05\"Y\n\x12\x43onvertMaterialRep\x12\x43\n\x0bresult_code\x18\x01 \x02(\x0e\x32..gameprotocol.events.ConvertMaterialResultCode\"\xe4\x03\n\nPlayerInfo\x12\x0e\n\x06userId\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\n\n\x02xp\x18\x03 \x01(\x05\x12(\n\x05teams\x18\x04 \x03(\x0b\x32\x19.gameprotocol.events.Team\x12:\n\x0b\x63reaturebox\x18\x05 \x03(\x0b\x32%.gameprotocol.events.CreatureInstance\x12\x36\n\x0bmaterialbox\x18\x06 \x03(\x0b\x32!.gameprotocol.events.MaterialData\x12-\n\x05\x62oost\x18\x07 \x01(\x0b\x32\x1e.gameprotocol.events.BoostInfo\x12\x30\n\x07\x65volves\x18\x08 \x03(\x0b\x32\x1f.gameprotocol.events.EvolveInfo\x12\x32\n\x08missions\x18\t \x03(\x0b\x32 .gameprotocol.events.MissionInst\x12\x14\n\x0c\x61\x63hievements\x18\n \x03(\t\x12\x0c\n\x04gems\x18\x0b \x01(\x05\x12\r\n\x05\x63oins\x18\x0c \x01(\x05\x12\x0e\n\x06hearts\x18\r \x01(\x05\x12\x0e\n\x06\x65nergy\x18\x0e \x01(\x05\x12\x14\n\x0cmaxCreatures\x18\x0f \x01(\x05\x12\x10\n\x08progress\x18\x10 \x01(\x05\"\x1c\n\x04Team\x12\x14\n\x0c\x63reaturesIds\x18\x01 \x03(\x05\"\xb8\x01\n\x10\x43reatureInstance\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0c\n\x04slug\x18\x02 \x01(\t\x12\n\n\x02xp\x18\x03 \x01(\x05\x12\r\n\x05level\x18\x04 \x01(\x05\x12\x0e\n\x06plusHP\x18\x05 \x01(\x05\x12\x12\n\nplusAttack\x18\x06 \x01(\x02\x12\x11\n\tplusSpeed\x18\x07 \x01(\x02\x12\x10\n\x08plusLuck\x18\x08 \x01(\x02\x12%\n\x03\x65gg\x18\t \x01(\x0b\x32\x18.gameprotocol.events.Egg\"\x8b\x01\n\x07\x43\x61pital\x12\x14\n\x0csoftCurrency\x18\x01 \x01(\x05\x12\x14\n\x0chardCurrency\x18\x02 \x01(\x05\x12\x0e\n\x06\x65nergy\x18\x03 \x01(\x05\x12\n\n\x02xp\x18\x04 \x01(\x05\x12\x10\n\x08progress\x18\x05 \x01(\x05\x12&\n\x04\x65ggs\x18\x06 \x03(\x0b\x32\x18.gameprotocol.events.Egg\"\xc5\x01\n\x03\x45gg\x12*\n\x04rank\x18\x01 \x01(\x0e\x32\x1c.gameprotocol.events.EggRank\x12*\n\x04type\x18\x02 \x01(\x0e\x32\x1c.gameprotocol.events.EggType\x12\x37\n\x08\x63reature\x18\x03 \x01(\x0b\x32%.gameprotocol.events.CreatureInstance\x12\x10\n\x08material\x18\x04 \x01(\t\x12\r\n\x05\x63oins\x18\x05 \x01(\x05\x12\x0c\n\x04gems\x18\x06 \x01(\x05\"C\n\x0b\x43omposedEgg\x12%\n\x03\x65gg\x18\x01 \x03(\x0b\x32\x18.gameprotocol.events.Egg\x12\r\n\x05param\x18\x02 \x03(\x05\"+\n\x0cMaterialData\x12\x0c\n\x04slug\x18\x01 \x02(\t\x12\r\n\x05\x63ount\x18\x02 \x02(\x05\"L\n\x0cMaterialInfo\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04tier\x18\x02 \x01(\t\x12\x0f\n\x07\x65lement\x18\x03 \x01(\t\x12\x0f\n\x07\x63vtRate\x18\x04 \x01(\t\"R\n\tBoostInfo\x12\x0e\n\x06\x61ttack\x18\x01 \x01(\x05\x12\r\n\x05speed\x18\x02 \x01(\x05\x12\n\n\x02hp\x18\x03 \x01(\x05\x12\n\n\x02\x63\x64\x18\x04 \x01(\x05\x12\x0e\n\x06\x61iming\x18\x05 \x01(\x05\"<\n\nEvolveInfo\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x0f\n\x07\x65lapsed\x18\x02 \x01(\x05\x12\x0f\n\x07\x65ndtime\x18\x03 \x01(\x05\"+\n\x0bMissionInst\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x10\n\x08progress\x18\x02 \x01(\x05\"\xd6\x04\n\x0c\x43reatureType\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x11\n\tdisplayID\x18\x02 \x01(\x05\x12?\n\nbounceType\x18\x03 \x01(\x0e\x32\x1f.gameprotocol.events.BounceType:\nREFLECTIVE\x12\x0e\n\x06\x62\x61seHP\x18\x04 \x01(\x05\x12\x0f\n\x07levelHP\x18\x05 \x01(\x05\x12\x13\n\x0b\x62\x61seEnemyHP\x18\x06 \x01(\x05\x12\x1a\n\x12levelEnemyHPFactor\x18\x07 \x01(\x02\x12\x12\n\nbaseBossHP\x18\x08 \x01(\x05\x12\x19\n\x11levelBossHPFactor\x18\t \x01(\x02\x12\x12\n\nbaseAttack\x18\n \x01(\x05\x12\x13\n\x0blevelAttack\x18\x0b \x01(\x05\x12\x11\n\tbaseSpeed\x18\x0c \x01(\x02\x12\x12\n\nlevelSpeed\x18\r \x01(\x02\x12\x10\n\x08maxLevel\x18\x0e \x01(\x05\x12\x0c\n\x04luck\x18\x0f \x01(\x05\x12.\n\x04race\x18\x10 \x01(\x0e\x32\x19.gameprotocol.events.Race:\x05HUMAN\x12\x33\n\x07\x65lement\x18\x11 \x01(\x0e\x32\x1c.gameprotocol.events.Element:\x04NONE\x12\x12\n\nstarRating\x18\x12 \x01(\x05\x12\x15\n\revolutionSlug\x18\x13 \x01(\t\x12\x37\n\ttranscend\x18\x14 \x01(\x0b\x32$.gameprotocol.events.TranscendConfig\x12*\n\x06skills\x18\x15 \x03(\x0b\x32\x1a.gameprotocol.events.Skill\"e\n\x0fTranscendConfig\x12\x15\n\rtranscendSlug\x18\x01 \x01(\t\x12;\n\x0e\x63reatureAmount\x18\x02 \x03(\x0b\x32#.gameprotocol.events.CreatureAmount\"6\n\x0e\x43reatureAmount\x12\x14\n\x0c\x63reatureSlug\x18\x01 \x01(\t\x12\x0e\n\x06\x61mount\x18\x02 \x01(\x05\"\x95\x01\n\x05Skill\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x32\n\x07trigger\x18\x02 \x01(\x0b\x32!.gameprotocol.events.SkillTrigger\x12\x30\n\x06\x65\x66\x66\x65\x63t\x18\x03 \x01(\x0b\x32 .gameprotocol.events.SkillEffect\x12\x18\n\x10localizationSlug\x18\x04 \x01(\t\"R\n\x0cSkillTrigger\x12.\n\x04type\x18\x01 \x01(\x0e\x32 .gameprotocol.events.TriggerType\x12\x12\n\nparameters\x18\x02 \x03(\x02\"P\n\x0bSkillEffect\x12-\n\x04type\x18\x01 \x01(\x0e\x32\x1f.gameprotocol.events.EffectType\x12\x12\n\nparameters\x18\x02 \x03(\x02\"?\n\x05World\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12(\n\x05zones\x18\x02 \x03(\x0b\x32\x19.gameprotocol.events.Zone\"\x86\x01\n\x04Zone\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x31\n\x0brequirement\x18\x03 \x01(\x0b\x32\x1c.gameprotocol.events.Capital\x12(\n\x05\x61reas\x18\x04 \x03(\x0b\x32\x19.gameprotocol.events.Area\"\x8c\x01\n\x04\x41rea\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x31\n\x0brequirement\x18\x03 \x01(\x0b\x32\x1c.gameprotocol.events.Capital\x12.\n\x08\x64ungeons\x18\x04 \x03(\x0b\x32\x1c.gameprotocol.events.Dungeon\"\xdd\x01\n\x07\x44ungeon\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x31\n\x0brequirement\x18\x03 \x01(\x0b\x32\x1c.gameprotocol.events.Capital\x12(\n\x05waves\x18\x04 \x03(\x0b\x32\x19.gameprotocol.events.Wave\x12,\n\x06reward\x18\x05 \x01(\x0b\x32\x1c.gameprotocol.events.Capital\x12\x12\n\nbackground\x18\x06 \x01(\t\x12\x10\n\x08\x65lements\x18\x07 \x03(\t\"\xa7\x01\n\x04Wave\x12\x0e\n\x06layout\x18\x01 \x01(\t\x12\x13\n\x0b\x65nvironment\x18\x02 \x01(\t\x12\r\n\x05\x61rena\x18\x03 \x01(\t\x12\x36\n\x07\x65nemies\x18\x04 \x03(\x0b\x32%.gameprotocol.events.CreatureInstance\x12\x33\n\x04\x62oss\x18\x05 \x01(\x0b\x32%.gameprotocol.events.CreatureInstance\"]\n\x0bMissionInfo\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x11\n\tcondition\x18\x02 \x01(\t\x12-\n\x07rewards\x18\x03 \x01(\x0b\x32\x1c.gameprotocol.events.Capital\"\x83\x01\n\x08SignInfo\x12\x12\n\ndeviceMode\x18\x01 \x01(\t\x12\x12\n\ndeviceName\x18\x02 \x01(\t\x12\x11\n\tdeviceUid\x18\x03 \x01(\t\x12\x0e\n\x06osName\x18\x04 \x01(\t\x12,\n\x07os_type\x18\x05 \x01(\x0e\x32\x1b.gameprotocol.events.OSType\"\x88\x01\n\x12ResourceDefinition\x12/\n\x04type\x18\x01 \x01(\x0e\x32!.gameprotocol.events.ResourceType\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x14\n\x0c\x66\x61llbackName\x18\x03 \x01(\t\x12\x0c\n\x04path\x18\x04 \x01(\t\x12\x0f\n\x07version\x18\x05 \x01(\t\"\x18\n\x16ResourceUpdaterRequest\"L\n\x13ResourceUpdaterList\x12\x35\n\x04list\x18\x01 \x03(\x0b\x32\'.gameprotocol.events.ResourceDefinition\"\xee\x03\n\rGlobalConfigs\x12?\n\x0bplayerLevel\x18\x01 \x03(\x0b\x32*.gameprotocol.events.PlayerLevelDefinition\x12I\n\x10\x63raftingMaterial\x18\x02 \x03(\x0b\x32/.gameprotocol.events.CraftingMaterialDefinition\x12\x45\n\x13\x65volutionDefinition\x18\x03 \x03(\x0b\x32(.gameprotocol.events.EvolutionDefinition\x12\x37\n\x0c\x66usingParams\x18\x04 \x01(\x0b\x32!.gameprotocol.events.FusingParams\x12\x39\n\rsellingParams\x18\x05 \x01(\x0b\x32\".gameprotocol.events.SellingParams\x12\x18\n\x10starRankMaxLevel\x18\x06 \x03(\x05\x12\x45\n\x13\x63reatureLevelParams\x18\x07 \x01(\x0b\x32(.gameprotocol.events.CreatureLevelParams\x12\x35\n\x07\x66\x61\x65ries\x18\x08 \x03(\x0b\x32$.gameprotocol.events.FaeryDefinition\"J\n\x15PlayerLevelDefinition\x12\n\n\x02xp\x18\x01 \x01(\x05\x12\x11\n\tmaxEnergy\x18\x02 \x01(\x05\x12\x12\n\nmaxFriends\x18\x03 \x01(\x05\"\xa1\x01\n\x1a\x43raftingMaterialDefinition\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x0c\n\x04tier\x18\x02 \x01(\x05\x12-\n\x07\x65lement\x18\x03 \x01(\x0e\x32\x1c.gameprotocol.events.Element\x12\x38\n\nconversion\x18\x04 \x03(\x0b\x32$.gameprotocol.events.CMaterialAmount\"\xbb\x01\n\x13\x45volutionDefinition\x12\x14\n\x0c\x66romStarRank\x18\x01 \x01(\x05\x12\x32\n\x04\x63ost\x18\x02 \x03(\x0b\x32$.gameprotocol.events.CMaterialAmount\x12\x44\n\relementalCost\x18\x03 \x03(\x0b\x32-.gameprotocol.events.CElementalMaterialAmount\x12\x14\n\x0csoftCurrency\x18\x04 \x01(\x05\".\n\x0f\x43MaterialAmount\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\r\n\x05\x63ount\x18\x02 \x01(\x05\"7\n\x18\x43\x45lementalMaterialAmount\x12\x0c\n\x04tier\x18\x01 \x01(\x05\x12\r\n\x05\x63ount\x18\x02 \x01(\x05\"\xf6\x03\n\x0c\x46usingParams\x12\x14\n\x0cxpGainParamA\x18\x01 \x01(\x02\x12\x14\n\x0cxpGainParamB\x18\x02 \x01(\x02\x12\x14\n\x0cxpGainParamC\x18\x03 \x01(\x02\x12\x14\n\x0cxpGainParamD\x18\x04 \x01(\x02\x12\x1e\n\x16softCurrencyCostParamA\x18\x05 \x01(\x02\x12\x1e\n\x16softCurrencyCostParamB\x18\x06 \x01(\x02\x12\x1e\n\x16softCurrencyCostParamC\x18\x07 \x01(\x02\x12\x1e\n\x16megaFusionChanceParamA\x18\x08 \x01(\x02\x12\x1e\n\x16megaFusionChanceParamB\x18\t \x01(\x02\x12\x1b\n\x13plusHPInheritParamA\x18\n \x01(\x02\x12\x1b\n\x13plusHPInheritParamB\x18\x0b \x01(\x02\x12\x1c\n\x14plusAtkInheritParamA\x18\x0c \x01(\x02\x12\x1c\n\x14plusAtkInheritParamB\x18\r \x01(\x02\x12\x1c\n\x14plusSpdInheritParamA\x18\x0e \x01(\x02\x12\x1c\n\x14plusSpdInheritParamB\x18\x0f \x01(\x02\x12\x1d\n\x15plusLuckInheritParamA\x18\x10 \x01(\x02\x12\x1d\n\x15plusLuckInheritParamB\x18\x11 \x01(\x02\"?\n\rSellingParams\x12\x0e\n\x06paramA\x18\x01 \x01(\x02\x12\x0e\n\x06paramB\x18\x02 \x01(\x02\x12\x0e\n\x06paramC\x18\x03 \x01(\x02\"t\n\x13\x43reatureLevelParams\x12\x1b\n\x13xpIncrementPerLevel\x18\x01 \x01(\x02\x12\x15\n\rstarRankScale\x18\x02 \x01(\x02\x12\x12\n\nlevelScale\x18\x03 \x01(\x02\x12\x15\n\rlevelExponent\x18\x04 \x01(\x02\"\x8b\x01\n\x0f\x46\x61\x65ryDefinition\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x0c\n\x04tier\x18\x02 \x01(\x05\x12-\n\x07\x65lement\x18\x03 \x01(\x0e\x32\x1c.gameprotocol.events.Element\x12-\n\x05stats\x18\x04 \x01(\x0b\x32\x1e.gameprotocol.events.FaeryStat\"q\n\tFaeryStat\x12\x0e\n\x06plusHP\x18\x01 \x01(\x05\x12\x0f\n\x07plusAtk\x18\x02 \x01(\x05\x12\x0f\n\x07plusSpd\x18\x03 \x01(\x02\x12\x10\n\x08plusLuck\x18\x04 \x01(\x05\x12\x14\n\x0csoftCurrency\x18\x05 \x01(\x05\x12\n\n\x02xp\x18\x06 \x01(\x05\"i\n\x0bProductInfo\x12\x0b\n\x03pid\x18\x01 \x01(\t\x12\x0c\n\x04slug\x18\x03 \x01(\t\x12\x0c\n\x04\x64\x65sc\x18\x04 \x01(\t\x12\x10\n\x08quantity\x18\x05 \x01(\x05\x12\r\n\x05price\x18\x06 \x01(\x05\x12\x10\n\x08\x63urrency\x18\x07 \x01(\x05\"\r\n\x0bProductsReq\"\x83\x01\n\x0cProductsResp\x12?\n\x0bresult_code\x18\x01 \x01(\x0e\x32*.gameprotocol.events.GetProductsResultCode\x12\x32\n\x08products\x18\x02 \x03(\x0b\x32 .gameprotocol.events.ProductInfo\"+\n\x0bPurchaseReq\x12\x0b\n\x03pid\x18\x01 \x01(\t\x12\x0f\n\x07receipt\x18\x02 \x01(\t\"\xb7\x01\n\x0fTransactionInfo\x12<\n\x0bresult_code\x18\x01 \x01(\x0e\x32\'.gameprotocol.events.PurchaseResultCode\x12\x0f\n\x07receipt\x18\x02 \x01(\t\x12\x10\n\x08order_id\x18\x03 \x01(\t\x12\x0b\n\x03msg\x18\x04 \x01(\t\x12\x36\n\x0cproduct_Info\x18\x05 \x01(\x0b\x32 .gameprotocol.events.ProductInfo\"I\n\x0cPurchaseResp\x12\x39\n\x0btrans_infos\x18\x01 \x03(\x0b\x32$.gameprotocol.events.TransactionInfo*:\n\nResultCode\x12\x0b\n\x07SUCCESS\x10\x01\x12\n\n\x06\x46\x41ILED\x10\x02\x12\x13\n\x0fINVALID_SESSION\x10\x65*\x94\x01\n\x18\x42\x61ttleBeginRepResultCode\x12\x18\n\x14\x42\x41TTLE_BEGIN_SUCCESS\x10\x00\x12\x1e\n\x1a\x42\x41TTLE_BEGIN_FAIL_PROGRESS\x10\x01\x12\x1c\n\x18\x42\x41TTLE_BEGIN_FAIL_ENERGY\x10\x02\x12 \n\x1c\x42\x41TTLE_BEGIN_INVALID_SESSION\x10\x65*Q\n\x08SignType\x12\t\n\x05\x45MPTY\x10\x00\x12\t\n\x05\x41PPLE\x10\x01\x12\n\n\x06GOOGLE\x10\x02\x12\x0c\n\x08\x46\x41\x43\x45\x42OOK\x10\x03\x12\t\n\x05\x45MAIL\x10\x04\x12\n\n\x06\x44\x45VICE\x10\x05*v\n\x10SignUpResultCode\x12\x12\n\x0eSIGNUP_SUCCESS\x10\x00\x12\x18\n\x14\x44UPLICATE_ACCOUNT_ID\x10\x01\x12\x17\n\x13MISSING_SIGNUP_TYPE\x10\x02\x12\x1b\n\x0eSIGHUP_UNKNOWN\x10\xff\xff\xff\xff\xff\xff\xff\xff\xff\x01*s\n\x10SignInResultCode\x12\x12\n\x0eSIGNIN_SUCCESS\x10\x00\x12\x14\n\x10PLAYER_NOT_EXIST\x10\x01\x12\x18\n\x14MISSING_SIGN_IN_TYPE\x10\x02\x12\x1b\n\x0eSIGNIN_UNKNOWN\x10\xff\xff\xff\xff\xff\xff\xff\xff\xff\x01*\x93\x01\n\x16LoginAccountResultCode\x12\x15\n\x11LOGIN_ACC_SUCCESS\x10\x00\x12\x1f\n\x1bLOGIN_ACC_MISSING_SIGN_TYPE\x10\x01\x12 \n\x1cLOGIN_ACC_DISABLED_SIGN_TYPE\x10\x02\x12\x1f\n\x1bLOGIN_ACC_MISSING_DEVICE_ID\x10\x03*G\n\x15LinkAccountResultCode\x12\x1a\n\x16LINK_ACC_DIFFERENT_PIP\x10\x01\x12\x12\n\x0eLINK_ACC_OTHER\x10\x02*H\n\x14SocialLinkResultCode\x12\x11\n\rSL_NEW_SOCIAL\x10\x00\x12\x0b\n\x07SL_SAME\x10\x01\x12\x10\n\x0cSL_DIFFERENT\x10\x02*9\n\nBounceType\x12\x0e\n\nREFLECTIVE\x10\x00\x12\x0f\n\x0bPASSTHROUGH\x10\x01\x12\n\n\x06\x42OUNCE\x10\x02*U\n\x04Race\x12\t\n\x05HUMAN\x10\x00\x12\x0e\n\nLIVINGITEM\x10\x01\x12\n\n\x06\x41NIMAL\x10\x02\x12\x07\n\x03\x45LF\x10\x03\x12\n\n\x06\x44RAGON\x10\x04\x12\x11\n\rFEED_CREATURE\x10\x05*G\n\x07\x45lement\x12\x08\n\x04NONE\x10\x00\x12\x08\n\x04\x46IRE\x10\x01\x12\t\n\x05WATER\x10\x02\x12\x08\n\x04WOOD\x10\x03\x12\x08\n\x04\x44\x41RK\x10\x04\x12\t\n\x05LIGHT\x10\x05*\x7f\n\x0c\x46riendAction\x12\x0e\n\nADD_FRIEND\x10\x01\x12\x11\n\rACCEPT_FRIEND\x10\x02\x12\x11\n\rIGNORE_FRIEND\x10\x03\x12\x11\n\rREMOVE_FRIEND\x10\x04\x12\x11\n\rMARK_FAVORITE\x10\x05\x12\x13\n\x0fUNMARK_FAVORITE\x10\x06*\x8d\x03\n\x16ModifyFriendResultCode\x12\x12\n\x0eMODIFY_SUCCESS\x10\x00\x12\x16\n\x12UNSUPPORTED_ACTION\x10\x01\x12\x12\n\x0e\x46RIEND_ON_SELF\x10\x02\x12\x14\n\x10\x46RIEND_NOT_EXIST\x10\x03\x12\x11\n\rFRIEND_FRIEND\x10\x04\x12\x12\n\x0e\x46RIEND_SENDING\x10\x05\x12\x14\n\x10\x46RIEND_RECEIVING\x10\x06\x12\x18\n\x14\x41\x43\x43\x45PT_NOT_RECEIVING\x10\x07\x12\x18\n\x14IGNORE_NOT_RECEIVING\x10\x08\x12\x13\n\x0fREMOVE_STRANGER\x10\t\x12\x15\n\x11\x46\x41VORITE_STRANGER\x10\n\x12\x15\n\x11\x46\x41VORITE_FAVORITE\x10\x0b\x12\x1b\n\x17UNFAVORITE_NOT_FAVORITE\x10\x0c\x12\x14\n\x10SELF_REACH_LIMIT\x10\r\x12\x13\n\x0fOPP_REACH_LIMIT\x10\x0e\x12!\n\x1dMODIFY_FRIEND_INVALID_SESSION\x10\x65*\\\n\x18GetFriendsInfoResultCode\x12\x1b\n\x17GET_FRIEND_INFO_SUCCESS\x10\x00\x12#\n\x1fGET_FRIEND_INFO_INVALID_SESSION\x10\x65*M\n\x13GetHelperResultCode\x12\x16\n\x12GET_HELPER_SUCCESS\x10\x00\x12\x1e\n\x1aGET_HELPER_INVALID_SESSION\x10\x65*\xe9\x01\n\x0e\x46useResultCode\x12\x10\n\x0c\x46USE_SUCCESS\x10\x00\x12\x17\n\x13\x46USE_MISSING_TARGET\x10\x01\x12\x19\n\x15\x46USE_TARGET_NOT_EXIST\x10\x02\x12\x13\n\x0f\x46USE_NO_FEEDERS\x10\x03\x12\x19\n\x15\x46USE_FEEDER_NOT_EXIST\x10\x04\x12\x16\n\x12\x46USE_FEEDER_IN_USE\x10\x05\x12\x14\n\x10\x46USE_FEEDER_SELF\x10\x06\x12\x19\n\x15\x46USE_NOT_ENOUGH_COINS\x10\x07\x12\x18\n\x14\x46USE_INVALID_SESSION\x10\x65*\xe3\x01\n\x10\x45volveResultCode\x12\x12\n\x0e\x45VOLVE_SUCCESS\x10\x00\x12\x19\n\x15\x45VOLVE_MISSING_TARGET\x10\x01\x12\x12\n\x0e\x45VOLVE_DISABLE\x10\x02\x12\x1b\n\x17\x45VOLVE_TARGET_NOT_EXIST\x10\x03\x12\x1c\n\x18\x45VOLVE_LEVEL_UNSATISFIED\x10\x04\x12\x18\n\x14\x45VOLVE_LACK_MATERIAL\x10\x05\x12\x1b\n\x17\x45VOLVE_NOT_ENOUGH_COINS\x10\x06\x12\x1a\n\x16\x45VOLVE_INVALID_SESSION\x10\x65*\xe4\x01\n\x10\x41scendResultCode\x12\x12\n\x0e\x41SCEND_SUCCESS\x10\x00\x12\x19\n\x15\x41SCEND_MISSING_TARGET\x10\x01\x12\x12\n\x0e\x41SCEND_DISABLE\x10\x02\x12\x1b\n\x17\x41SCEND_TARGET_NOT_EXIST\x10\x03\x12\x1c\n\x18\x41SCEND_LEVEL_UNSATISFIED\x10\x04\x12\x19\n\x15\x41SCEND_MISSING_FEEDER\x10\x05\x12\x1b\n\x17\x41SCEND_NOT_ENOUGH_COINS\x10\x06\x12\x1a\n\x16\x41SCEND_INVALID_SESSION\x10\x65*\x90\x01\n\x16SellCreatureResultCode\x12\x10\n\x0cSOLD_SUCCESS\x10\x00\x12\x17\n\x13SELL_MISSING_TARGET\x10\x01\x12\x19\n\x15SELL_TARGET_NOT_EXIST\x10\x02\x12\x16\n\x12SELL_TARGET_IN_USE\x10\x03\x12\x18\n\x14SELL_INVALID_SESSION\x10\x65*m\n\x13\x41\x64\x64\x45nergyResultCode\x12\x16\n\x12\x41\x44\x44_ENERGY_SUCCESS\x10\x00\x12\x1e\n\x1a\x41\x44\x44_ENERGY_NOT_ENOUGH_GEMS\x10\x01\x12\x1e\n\x1a\x41\x44\x44_ENERGY_INVALID_SESSION\x10\x65*\xd5\x01\n\x19\x43onvertMaterialResultCode\x12\x13\n\x0f\x43ONVERT_SUCCESS\x10\x00\x12\x18\n\x14\x43ONVERT_MISSING_FROM\x10\x01\x12\x16\n\x12\x43ONVERT_MISSING_TO\x10\x02\x12\x1a\n\x16\x43ONVERT_MISSING_AMOUNT\x10\x03\x12\x17\n\x13\x43ONVERT_NOT_ALLOWED\x10\x04\x12\x1f\n\x1b\x43ONVERT_NOT_ENOUGH_MATERIAL\x10\x05\x12\x1b\n\x17\x43ONVERT_INVALID_SESSION\x10\x65*\x8c\x01\n\x1a\x42uyCreatureSpaceResultCode\x12\x1e\n\x1a\x42UY_CREATURE_SPACE_SUCCESS\x10\x00\x12&\n\"BUY_CREATURE_SPACE_NOT_ENOUGH_GEMS\x10\x01\x12&\n\"BUY_CREATURE_SPACE_INVALID_SESSION\x10\x65*+\n\x07\x45ggRank\x12\n\n\x06NORMAL\x10\x01\x12\n\n\x06SILVER\x10\x02\x12\x08\n\x04GOLD\x10\x03*T\n\x07\x45ggType\x12\x0e\n\nFAERIE_EGG\x10\x01\x12\x0c\n\x08SELF_EGG\x10\x02\x12\x10\n\x0cMATERIAL_EGG\x10\x03\x12\x0c\n\x08\x43OIN_EGG\x10\x04\x12\x0b\n\x07GEM_EGG\x10\x05*\xf4\x01\n\x0bTriggerType\x12\x11\n\rONHITBYFRIEND\x10\x01\x12\x0f\n\x0bONHITFRIEND\x10\x02\x12\x0e\n\nONACTIVATE\x10\x03\x12\x0e\n\nONHITENEMY\x10\x04\x12\x0f\n\x0bONHITBORDER\x10\x05\x12\x0f\n\x0bONCOMPUTEHP\x10\x06\x12\x13\n\x0fONCOMPUTEATTACK\x10\x07\x12\x12\n\x0eONCOMPUTESPEED\x10\x08\x12\x12\n\x0eONCOMPUTEMAXXP\x10\t\x12\x11\n\rONENEMYATTACK\x10\n\x12\x0b\n\x07ONSPAWN\x10\x0b\x12\x10\n\x0cONSPAWNENEMY\x10\x0c\x12\x10\n\x0cONENEMYSPAWN\x10\r*\xd7\x02\n\nEffectType\x12\x11\n\rSHOOTVERTICAL\x10\x01\x12\x13\n\x0fSHOOTHORIZONTAL\x10\x02\x12\x11\n\rSHOOTDIAGONAL\x10\x03\x12\x16\n\x12SHOOTALLDIRECTIONS\x10\x04\x12\x10\n\x0cSHOOTNEAREST\x10\x05\x12\x0f\n\x0bSHOOTRANDOM\x10\x06\x12\x08\n\x04HEAL\x10\x07\x12\x10\n\x0cQUADINCREASE\x10\x08\x12\x10\n\x0cSQRTINCREASE\x10\t\x12\x12\n\x0eSTICKANDLASERS\x10\n\x12\t\n\x05\x42LAST\x10\x0b\x12\x07\n\x03GAR\x10\x0c\x12\x0b\n\x07\x45XLASER\x10\r\x12\x0f\n\x0b\x42OSSEXLASER\x10\x0e\x12\r\n\tBOSSBLAST\x10\x0f\x12\x0b\n\x07\x42OSSGAR\x10\x10\x12\x10\n\x0c\x45NHANCESPEED\x10\x11\x12\x0e\n\nSPREADSHOT\x10\x12\x12\x0e\n\nSUPERBLAST\x10\x13\x12\x11\n\rENHANCEATTACK\x10\x14*v\n\x0cResourceType\x12\x0c\n\x08REQUIRED\x10\x01\x12\x0c\n\x08OPTIONAL\x10\x02\x12\x0e\n\nOVERRIDING\x10\x03\x12\x0e\n\nMEMORYONLY\x10\x04\x12\x17\n\x13OPTIONAL_OVERRIDING\x10\x05\x12\x11\n\rBUILTINCLIENT\x10\x06*\x1e\n\x06OSType\x12\x07\n\x03IOS\x10\x01\x12\x0b\n\x07\x41ndroid\x10\x02*m\n\x15GetProductsResultCode\x12\x18\n\x14GET_PRODUCTS_SUCCESS\x10\x00\x12\x18\n\x14NOT_SUPPORTED_DEVICE\x10\x01\x12 \n\x1cGET_PRODUCTS_INVALID_SESSION\x10\x02*\xe2\x01\n\x12PurchaseResultCode\x12\x15\n\x11SUCCESS_PURCHASED\x10\x00\x12\x12\n\x0eSUCCESS_UNPAID\x10\x01\x12\x16\n\x12\x44UPLICATE_PURCHASE\x10\x02\x12\x0e\n\nAPPLE_BUSY\x10\x03\x12\x16\n\x12INVALID_PRODUCT_ID\x10\x04\x12\r\n\tDUPLICATE\x10\x05\x12\r\n\tIAP_THIEF\x10\x06\x12\x0f\n\x0bIAB_CHEATER\x10\x07\x12\x1c\n\x18PURCHASE_INVALID_SESSION\x10\x65\x12\x14\n\x07UNKNOWN\x10\xff\xff\xff\xff\xff\xff\xff\xff\xff\x01')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -44,8 +44,8 @@ _RESULTCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=10360,
-  serialized_end=10418,
+  serialized_start=10869,
+  serialized_end=10927,
 )
 _sym_db.RegisterEnumDescriptor(_RESULTCODE)
 
@@ -75,8 +75,8 @@ _BATTLEBEGINREPRESULTCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=10421,
-  serialized_end=10569,
+  serialized_start=10930,
+  serialized_end=11078,
 )
 _sym_db.RegisterEnumDescriptor(_BATTLEBEGINREPRESULTCODE)
 
@@ -114,8 +114,8 @@ _SIGNTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=10571,
-  serialized_end=10652,
+  serialized_start=11080,
+  serialized_end=11161,
 )
 _sym_db.RegisterEnumDescriptor(_SIGNTYPE)
 
@@ -145,8 +145,8 @@ _SIGNUPRESULTCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=10654,
-  serialized_end=10772,
+  serialized_start=11163,
+  serialized_end=11281,
 )
 _sym_db.RegisterEnumDescriptor(_SIGNUPRESULTCODE)
 
@@ -176,8 +176,8 @@ _SIGNINRESULTCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=10774,
-  serialized_end=10889,
+  serialized_start=11283,
+  serialized_end=11398,
 )
 _sym_db.RegisterEnumDescriptor(_SIGNINRESULTCODE)
 
@@ -207,8 +207,8 @@ _LOGINACCOUNTRESULTCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=10892,
-  serialized_end=11039,
+  serialized_start=11401,
+  serialized_end=11548,
 )
 _sym_db.RegisterEnumDescriptor(_LOGINACCOUNTRESULTCODE)
 
@@ -230,8 +230,8 @@ _LINKACCOUNTRESULTCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=11041,
-  serialized_end=11112,
+  serialized_start=11550,
+  serialized_end=11621,
 )
 _sym_db.RegisterEnumDescriptor(_LINKACCOUNTRESULTCODE)
 
@@ -257,8 +257,8 @@ _SOCIALLINKRESULTCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=11114,
-  serialized_end=11186,
+  serialized_start=11623,
+  serialized_end=11695,
 )
 _sym_db.RegisterEnumDescriptor(_SOCIALLINKRESULTCODE)
 
@@ -284,8 +284,8 @@ _BOUNCETYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=11188,
-  serialized_end=11245,
+  serialized_start=11697,
+  serialized_end=11754,
 )
 _sym_db.RegisterEnumDescriptor(_BOUNCETYPE)
 
@@ -323,8 +323,8 @@ _RACE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=11247,
-  serialized_end=11332,
+  serialized_start=11756,
+  serialized_end=11841,
 )
 _sym_db.RegisterEnumDescriptor(_RACE)
 
@@ -362,8 +362,8 @@ _ELEMENT = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=11334,
-  serialized_end=11405,
+  serialized_start=11843,
+  serialized_end=11914,
 )
 _sym_db.RegisterEnumDescriptor(_ELEMENT)
 
@@ -401,8 +401,8 @@ _FRIENDACTION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=11407,
-  serialized_end=11534,
+  serialized_start=11916,
+  serialized_end=12043,
 )
 _sym_db.RegisterEnumDescriptor(_FRIENDACTION)
 
@@ -480,8 +480,8 @@ _MODIFYFRIENDRESULTCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=11537,
-  serialized_end=11934,
+  serialized_start=12046,
+  serialized_end=12443,
 )
 _sym_db.RegisterEnumDescriptor(_MODIFYFRIENDRESULTCODE)
 
@@ -503,8 +503,8 @@ _GETFRIENDSINFORESULTCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=11936,
-  serialized_end=12028,
+  serialized_start=12445,
+  serialized_end=12537,
 )
 _sym_db.RegisterEnumDescriptor(_GETFRIENDSINFORESULTCODE)
 
@@ -526,8 +526,8 @@ _GETHELPERRESULTCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=12030,
-  serialized_end=12107,
+  serialized_start=12539,
+  serialized_end=12616,
 )
 _sym_db.RegisterEnumDescriptor(_GETHELPERRESULTCODE)
 
@@ -577,8 +577,8 @@ _FUSERESULTCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=12110,
-  serialized_end=12343,
+  serialized_start=12619,
+  serialized_end=12852,
 )
 _sym_db.RegisterEnumDescriptor(_FUSERESULTCODE)
 
@@ -624,8 +624,8 @@ _EVOLVERESULTCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=12346,
-  serialized_end=12573,
+  serialized_start=12855,
+  serialized_end=13082,
 )
 _sym_db.RegisterEnumDescriptor(_EVOLVERESULTCODE)
 
@@ -671,8 +671,8 @@ _ASCENDRESULTCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=12576,
-  serialized_end=12804,
+  serialized_start=13085,
+  serialized_end=13313,
 )
 _sym_db.RegisterEnumDescriptor(_ASCENDRESULTCODE)
 
@@ -706,8 +706,8 @@ _SELLCREATURERESULTCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=12807,
-  serialized_end=12951,
+  serialized_start=13316,
+  serialized_end=13460,
 )
 _sym_db.RegisterEnumDescriptor(_SELLCREATURERESULTCODE)
 
@@ -733,12 +733,82 @@ _ADDENERGYRESULTCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=12953,
-  serialized_end=13062,
+  serialized_start=13462,
+  serialized_end=13571,
 )
 _sym_db.RegisterEnumDescriptor(_ADDENERGYRESULTCODE)
 
 AddEnergyResultCode = enum_type_wrapper.EnumTypeWrapper(_ADDENERGYRESULTCODE)
+_CONVERTMATERIALRESULTCODE = _descriptor.EnumDescriptor(
+  name='ConvertMaterialResultCode',
+  full_name='gameprotocol.events.ConvertMaterialResultCode',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='CONVERT_SUCCESS', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CONVERT_MISSING_FROM', index=1, number=1,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CONVERT_MISSING_TO', index=2, number=2,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CONVERT_MISSING_AMOUNT', index=3, number=3,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CONVERT_NOT_ALLOWED', index=4, number=4,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CONVERT_NOT_ENOUGH_MATERIAL', index=5, number=5,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CONVERT_INVALID_SESSION', index=6, number=101,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=13574,
+  serialized_end=13787,
+)
+_sym_db.RegisterEnumDescriptor(_CONVERTMATERIALRESULTCODE)
+
+ConvertMaterialResultCode = enum_type_wrapper.EnumTypeWrapper(_CONVERTMATERIALRESULTCODE)
+_BUYCREATURESPACERESULTCODE = _descriptor.EnumDescriptor(
+  name='BuyCreatureSpaceResultCode',
+  full_name='gameprotocol.events.BuyCreatureSpaceResultCode',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='BUY_CREATURE_SPACE_SUCCESS', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='BUY_CREATURE_SPACE_NOT_ENOUGH_GEMS', index=1, number=1,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='BUY_CREATURE_SPACE_INVALID_SESSION', index=2, number=101,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=13790,
+  serialized_end=13930,
+)
+_sym_db.RegisterEnumDescriptor(_BUYCREATURESPACERESULTCODE)
+
+BuyCreatureSpaceResultCode = enum_type_wrapper.EnumTypeWrapper(_BUYCREATURESPACERESULTCODE)
 _EGGRANK = _descriptor.EnumDescriptor(
   name='EggRank',
   full_name='gameprotocol.events.EggRank',
@@ -760,8 +830,8 @@ _EGGRANK = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=13064,
-  serialized_end=13107,
+  serialized_start=13932,
+  serialized_end=13975,
 )
 _sym_db.RegisterEnumDescriptor(_EGGRANK)
 
@@ -788,11 +858,15 @@ _EGGTYPE = _descriptor.EnumDescriptor(
       name='COIN_EGG', index=3, number=4,
       options=None,
       type=None),
+    _descriptor.EnumValueDescriptor(
+      name='GEM_EGG', index=4, number=5,
+      options=None,
+      type=None),
   ],
   containing_type=None,
   options=None,
-  serialized_start=13109,
-  serialized_end=13180,
+  serialized_start=13977,
+  serialized_end=14061,
 )
 _sym_db.RegisterEnumDescriptor(_EGGTYPE)
 
@@ -858,8 +932,8 @@ _TRIGGERTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=13183,
-  serialized_end=13427,
+  serialized_start=14064,
+  serialized_end=14308,
 )
 _sym_db.RegisterEnumDescriptor(_TRIGGERTYPE)
 
@@ -953,8 +1027,8 @@ _EFFECTTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=13430,
-  serialized_end=13773,
+  serialized_start=14311,
+  serialized_end=14654,
 )
 _sym_db.RegisterEnumDescriptor(_EFFECTTYPE)
 
@@ -992,15 +1066,15 @@ _RESOURCETYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=13775,
-  serialized_end=13893,
+  serialized_start=14656,
+  serialized_end=14774,
 )
 _sym_db.RegisterEnumDescriptor(_RESOURCETYPE)
 
 ResourceType = enum_type_wrapper.EnumTypeWrapper(_RESOURCETYPE)
-_OS_TYPE = _descriptor.EnumDescriptor(
-  name='OS_TYPE',
-  full_name='gameprotocol.events.OS_TYPE',
+_OSTYPE = _descriptor.EnumDescriptor(
+  name='OSType',
+  full_name='gameprotocol.events.OSType',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -1015,15 +1089,15 @@ _OS_TYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=13895,
-  serialized_end=13926,
+  serialized_start=14776,
+  serialized_end=14806,
 )
-_sym_db.RegisterEnumDescriptor(_OS_TYPE)
+_sym_db.RegisterEnumDescriptor(_OSTYPE)
 
-OS_TYPE = enum_type_wrapper.EnumTypeWrapper(_OS_TYPE)
-_GET_PRODUCTS_CODE = _descriptor.EnumDescriptor(
-  name='GET_PRODUCTS_CODE',
-  full_name='gameprotocol.events.GET_PRODUCTS_CODE',
+OSType = enum_type_wrapper.EnumTypeWrapper(_OSTYPE)
+_GETPRODUCTSRESULTCODE = _descriptor.EnumDescriptor(
+  name='GetProductsResultCode',
+  full_name='gameprotocol.events.GetProductsResultCode',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -1036,25 +1110,21 @@ _GET_PRODUCTS_CODE = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='INVALID_PLAYER_ID', index=2, number=2,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='GET_PRODUCTS_INVALID_SESSION', index=3, number=3,
+      name='GET_PRODUCTS_INVALID_SESSION', index=2, number=2,
       options=None,
       type=None),
   ],
   containing_type=None,
   options=None,
-  serialized_start=13929,
-  serialized_end=14057,
+  serialized_start=14808,
+  serialized_end=14917,
 )
-_sym_db.RegisterEnumDescriptor(_GET_PRODUCTS_CODE)
+_sym_db.RegisterEnumDescriptor(_GETPRODUCTSRESULTCODE)
 
-GET_PRODUCTS_CODE = enum_type_wrapper.EnumTypeWrapper(_GET_PRODUCTS_CODE)
-_PURCHASE_RESULT_CODE = _descriptor.EnumDescriptor(
-  name='PURCHASE_RESULT_CODE',
-  full_name='gameprotocol.events.PURCHASE_RESULT_CODE',
+GetProductsResultCode = enum_type_wrapper.EnumTypeWrapper(_GETPRODUCTSRESULTCODE)
+_PURCHASERESULTCODE = _descriptor.EnumDescriptor(
+  name='PurchaseResultCode',
+  full_name='gameprotocol.events.PurchaseResultCode',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -1101,12 +1171,12 @@ _PURCHASE_RESULT_CODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=14060,
-  serialized_end=14288,
+  serialized_start=14920,
+  serialized_end=15146,
 )
-_sym_db.RegisterEnumDescriptor(_PURCHASE_RESULT_CODE)
+_sym_db.RegisterEnumDescriptor(_PURCHASERESULTCODE)
 
-PURCHASE_RESULT_CODE = enum_type_wrapper.EnumTypeWrapper(_PURCHASE_RESULT_CODE)
+PurchaseResultCode = enum_type_wrapper.EnumTypeWrapper(_PURCHASERESULTCODE)
 SUCCESS = 1
 FAILED = 2
 INVALID_SESSION = 101
@@ -1211,6 +1281,16 @@ SELL_INVALID_SESSION = 101
 ADD_ENERGY_SUCCESS = 0
 ADD_ENERGY_NOT_ENOUGH_GEMS = 1
 ADD_ENERGY_INVALID_SESSION = 101
+CONVERT_SUCCESS = 0
+CONVERT_MISSING_FROM = 1
+CONVERT_MISSING_TO = 2
+CONVERT_MISSING_AMOUNT = 3
+CONVERT_NOT_ALLOWED = 4
+CONVERT_NOT_ENOUGH_MATERIAL = 5
+CONVERT_INVALID_SESSION = 101
+BUY_CREATURE_SPACE_SUCCESS = 0
+BUY_CREATURE_SPACE_NOT_ENOUGH_GEMS = 1
+BUY_CREATURE_SPACE_INVALID_SESSION = 101
 NORMAL = 1
 SILVER = 2
 GOLD = 3
@@ -1218,6 +1298,7 @@ FAERIE_EGG = 1
 SELF_EGG = 2
 MATERIAL_EGG = 3
 COIN_EGG = 4
+GEM_EGG = 5
 ONHITBYFRIEND = 1
 ONHITFRIEND = 2
 ONACTIVATE = 3
@@ -1261,8 +1342,7 @@ IOS = 1
 Android = 2
 GET_PRODUCTS_SUCCESS = 0
 NOT_SUPPORTED_DEVICE = 1
-INVALID_PLAYER_ID = 2
-GET_PRODUCTS_INVALID_SESSION = 3
+GET_PRODUCTS_INVALID_SESSION = 2
 SUCCESS_PURCHASED = 0
 SUCCESS_UNPAID = 1
 DUPLICATE_PURCHASE = 2
@@ -2083,8 +2163,8 @@ _BATTLEBEGINREP = _descriptor.Descriptor(
       options=None),
     _descriptor.FieldDescriptor(
       name='boss_egg', full_name='gameprotocol.events.BattleBeginRep.boss_egg', index=4,
-      number=5, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -2097,8 +2177,8 @@ _BATTLEBEGINREP = _descriptor.Descriptor(
       options=None),
     _descriptor.FieldDescriptor(
       name='speed_egg', full_name='gameprotocol.events.BattleBeginRep.speed_egg', index=6,
-      number=7, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      number=7, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -2106,6 +2186,13 @@ _BATTLEBEGINREP = _descriptor.Descriptor(
       name='luck_egg', full_name='gameprotocol.events.BattleBeginRep.luck_egg', index=7,
       number=8, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='dungeon_egg', full_name='gameprotocol.events.BattleBeginRep.dungeon_egg', index=8,
+      number=9, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -2121,7 +2208,7 @@ _BATTLEBEGINREP = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=1725,
-  serialized_end=2059,
+  serialized_end=2114,
 )
 
 
@@ -2133,16 +2220,37 @@ _BATTLEEND = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='win', full_name='gameprotocol.events.BattleEnd.win', index=0,
-      number=1, type=8, cpp_type=7, label=1,
+      name='zoneSlug', full_name='gameprotocol.events.BattleEnd.zoneSlug', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='areaSlug', full_name='gameprotocol.events.BattleEnd.areaSlug', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='dungeonSlug', full_name='gameprotocol.events.BattleEnd.dungeonSlug', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='win', full_name='gameprotocol.events.BattleEnd.win', index=3,
+      number=4, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='speed', full_name='gameprotocol.events.BattleEnd.speed', index=1,
-      number=2, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
+      name='turns', full_name='gameprotocol.events.BattleEnd.turns', index=4,
+      number=5, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -2157,8 +2265,8 @@ _BATTLEEND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2061,
-  serialized_end=2100,
+  serialized_start=2116,
+  serialized_end=2212,
 )
 
 
@@ -2187,8 +2295,8 @@ _BATTLEENDREP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2102,
-  serialized_end=2170,
+  serialized_start=2214,
+  serialized_end=2282,
 )
 
 
@@ -2224,8 +2332,8 @@ _HELPER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2172,
-  serialized_end=2291,
+  serialized_start=2284,
+  serialized_end=2403,
 )
 
 
@@ -2247,8 +2355,8 @@ _GETHELPER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2293,
-  serialized_end=2304,
+  serialized_start=2405,
+  serialized_end=2416,
 )
 
 
@@ -2284,8 +2392,8 @@ _GETHELPERREP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2306,
-  serialized_end=2429,
+  serialized_start=2418,
+  serialized_end=2541,
 )
 
 
@@ -2321,8 +2429,8 @@ _MODIFYFRIEND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2431,
-  serialized_end=2515,
+  serialized_start=2543,
+  serialized_end=2627,
 )
 
 
@@ -2358,8 +2466,8 @@ _MODIFYFRIENDREP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2518,
-  serialized_end=2652,
+  serialized_start=2630,
+  serialized_end=2764,
 )
 
 
@@ -2381,8 +2489,8 @@ _GETFRIENDSINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2654,
-  serialized_end=2670,
+  serialized_start=2766,
+  serialized_end=2782,
 )
 
 
@@ -2418,8 +2526,8 @@ _FRIENDINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2672,
-  serialized_end=2766,
+  serialized_start=2784,
+  serialized_end=2878,
 )
 
 
@@ -2469,8 +2577,8 @@ _GETFRIENDSINFOREP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2769,
-  serialized_end=3034,
+  serialized_start=2881,
+  serialized_end=3146,
 )
 
 
@@ -2506,8 +2614,8 @@ _FUSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3036,
-  serialized_end=3153,
+  serialized_start=3148,
+  serialized_end=3265,
 )
 
 
@@ -2557,8 +2665,8 @@ _FUSEREP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3156,
-  serialized_end=3326,
+  serialized_start=3268,
+  serialized_end=3438,
 )
 
 
@@ -2587,8 +2695,8 @@ _EVOLVE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3328,
-  serialized_end=3391,
+  serialized_start=3440,
+  serialized_end=3503,
 )
 
 
@@ -2631,8 +2739,8 @@ _EVOLVEREP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3394,
-  serialized_end=3546,
+  serialized_start=3506,
+  serialized_end=3658,
 )
 
 
@@ -2661,8 +2769,8 @@ _ASCEND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3548,
-  serialized_end=3611,
+  serialized_start=3660,
+  serialized_end=3723,
 )
 
 
@@ -2705,8 +2813,8 @@ _ASCENDREP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3614,
-  serialized_end=3766,
+  serialized_start=3726,
+  serialized_end=3878,
 )
 
 
@@ -2735,8 +2843,8 @@ _SELLCREATURE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3768,
-  serialized_end=3837,
+  serialized_start=3880,
+  serialized_end=3949,
 )
 
 
@@ -2772,8 +2880,8 @@ _SELLCREATUREREP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3839,
-  serialized_end=3937,
+  serialized_start=3951,
+  serialized_end=4049,
 )
 
 
@@ -2795,8 +2903,8 @@ _GACHATREES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3939,
-  serialized_end=3951,
+  serialized_start=4051,
+  serialized_end=4063,
 )
 
 
@@ -2825,8 +2933,8 @@ _GACHATREESREP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3953,
-  serialized_end=3988,
+  serialized_start=4065,
+  serialized_end=4100,
 )
 
 
@@ -2855,8 +2963,8 @@ _GACHASHAKE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3990,
-  serialized_end=4021,
+  serialized_start=4102,
+  serialized_end=4133,
 )
 
 
@@ -2892,8 +3000,8 @@ _GACHASHAKEREP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4023,
-  serialized_end=4131,
+  serialized_start=4135,
+  serialized_end=4243,
 )
 
 
@@ -2915,8 +3023,8 @@ _ADDENERGY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4133,
-  serialized_end=4144,
+  serialized_start=4245,
+  serialized_end=4256,
 )
 
 
@@ -2945,8 +3053,8 @@ _ADDENERGYREP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4146,
-  serialized_end=4223,
+  serialized_start=4258,
+  serialized_end=4335,
 )
 
 
@@ -2957,9 +3065,32 @@ _BUYCREATURESPACE = _descriptor.Descriptor(
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=4337,
+  serialized_end=4355,
+)
+
+
+_BUYCREATURESPACEREP = _descriptor.Descriptor(
+  name='BuyCreatureSpaceRep',
+  full_name='gameprotocol.events.BuyCreatureSpaceRep',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
     _descriptor.FieldDescriptor(
-      name='num', full_name='gameprotocol.events.BuyCreatureSpace.num', index=0,
-      number=1, type=5, cpp_type=1, label=1,
+      name='result_code', full_name='gameprotocol.events.BuyCreatureSpaceRep.result_code', index=0,
+      number=1, type=14, cpp_type=8, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -2975,18 +3106,39 @@ _BUYCREATURESPACE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4225,
-  serialized_end=4256,
+  serialized_start=4357,
+  serialized_end=4448,
 )
 
 
-_BUYCREATURESPACEREP = _descriptor.Descriptor(
-  name='BuyCreatureSpaceRep',
-  full_name='gameprotocol.events.BuyCreatureSpaceRep',
+_CONVERTMATERIAL = _descriptor.Descriptor(
+  name='ConvertMaterial',
+  full_name='gameprotocol.events.ConvertMaterial',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
+    _descriptor.FieldDescriptor(
+      name='from_slug', full_name='gameprotocol.events.ConvertMaterial.from_slug', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='to_slug', full_name='gameprotocol.events.ConvertMaterial.to_slug', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='amount', full_name='gameprotocol.events.ConvertMaterial.amount', index=2,
+      number=3, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -2998,8 +3150,38 @@ _BUYCREATURESPACEREP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4258,
-  serialized_end=4279,
+  serialized_start=4450,
+  serialized_end=4519,
+)
+
+
+_CONVERTMATERIALREP = _descriptor.Descriptor(
+  name='ConvertMaterialRep',
+  full_name='gameprotocol.events.ConvertMaterialRep',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='result_code', full_name='gameprotocol.events.ConvertMaterialRep.result_code', index=0,
+      number=1, type=14, cpp_type=8, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=4521,
+  serialized_end=4610,
 )
 
 
@@ -3133,8 +3315,8 @@ _PLAYERINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4282,
-  serialized_end=4766,
+  serialized_start=4613,
+  serialized_end=5097,
 )
 
 
@@ -3163,8 +3345,8 @@ _TEAM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4768,
-  serialized_end=4796,
+  serialized_start=5099,
+  serialized_end=5127,
 )
 
 
@@ -3212,21 +3394,21 @@ _CREATUREINSTANCE = _descriptor.Descriptor(
       options=None),
     _descriptor.FieldDescriptor(
       name='plusAttack', full_name='gameprotocol.events.CreatureInstance.plusAttack', index=5,
-      number=6, type=5, cpp_type=1, label=1,
+      number=6, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='plusSpeed', full_name='gameprotocol.events.CreatureInstance.plusSpeed', index=6,
-      number=7, type=5, cpp_type=1, label=1,
+      number=7, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='plusLuck', full_name='gameprotocol.events.CreatureInstance.plusLuck', index=7,
-      number=8, type=5, cpp_type=1, label=1,
+      number=8, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -3249,8 +3431,8 @@ _CREATUREINSTANCE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4799,
-  serialized_end=4983,
+  serialized_start=5130,
+  serialized_end=5314,
 )
 
 
@@ -3314,8 +3496,8 @@ _CAPITAL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4986,
-  serialized_end=5125,
+  serialized_start=5317,
+  serialized_end=5456,
 )
 
 
@@ -3361,6 +3543,13 @@ _EGG = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='gems', full_name='gameprotocol.events.Egg.gems', index=5,
+      number=6, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -3372,8 +3561,82 @@ _EGG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5128,
-  serialized_end=5311,
+  serialized_start=5459,
+  serialized_end=5656,
+)
+
+
+_COMPOSEDEGG = _descriptor.Descriptor(
+  name='ComposedEgg',
+  full_name='gameprotocol.events.ComposedEgg',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='egg', full_name='gameprotocol.events.ComposedEgg.egg', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='param', full_name='gameprotocol.events.ComposedEgg.param', index=1,
+      number=2, type=5, cpp_type=1, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=5658,
+  serialized_end=5725,
+)
+
+
+_MATERIALDATA = _descriptor.Descriptor(
+  name='MaterialData',
+  full_name='gameprotocol.events.MaterialData',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='slug', full_name='gameprotocol.events.MaterialData.slug', index=0,
+      number=1, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='count', full_name='gameprotocol.events.MaterialData.count', index=1,
+      number=2, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=5727,
+  serialized_end=5770,
 )
 
 
@@ -3423,8 +3686,8 @@ _MATERIALINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5313,
-  serialized_end=5389,
+  serialized_start=5772,
+  serialized_end=5848,
 )
 
 
@@ -3481,8 +3744,8 @@ _BOOSTINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5391,
-  serialized_end=5473,
+  serialized_start=5850,
+  serialized_end=5932,
 )
 
 
@@ -3525,8 +3788,8 @@ _EVOLVEINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5475,
-  serialized_end=5535,
+  serialized_start=5934,
+  serialized_end=5994,
 )
 
 
@@ -3562,8 +3825,8 @@ _MISSIONINST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5537,
-  serialized_end=5580,
+  serialized_start=5996,
+  serialized_end=6039,
 )
 
 
@@ -3732,8 +3995,8 @@ _CREATURETYPE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5583,
-  serialized_end=6181,
+  serialized_start=6042,
+  serialized_end=6640,
 )
 
 
@@ -3769,8 +4032,8 @@ _TRANSCENDCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6183,
-  serialized_end=6284,
+  serialized_start=6642,
+  serialized_end=6743,
 )
 
 
@@ -3806,8 +4069,8 @@ _CREATUREAMOUNT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6286,
-  serialized_end=6340,
+  serialized_start=6745,
+  serialized_end=6799,
 )
 
 
@@ -3857,8 +4120,8 @@ _SKILL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6343,
-  serialized_end=6492,
+  serialized_start=6802,
+  serialized_end=6951,
 )
 
 
@@ -3894,8 +4157,8 @@ _SKILLTRIGGER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6494,
-  serialized_end=6576,
+  serialized_start=6953,
+  serialized_end=7035,
 )
 
 
@@ -3931,8 +4194,8 @@ _SKILLEFFECT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6578,
-  serialized_end=6658,
+  serialized_start=7037,
+  serialized_end=7117,
 )
 
 
@@ -3968,8 +4231,8 @@ _WORLD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6660,
-  serialized_end=6723,
+  serialized_start=7119,
+  serialized_end=7182,
 )
 
 
@@ -4019,8 +4282,8 @@ _ZONE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6726,
-  serialized_end=6860,
+  serialized_start=7185,
+  serialized_end=7319,
 )
 
 
@@ -4070,8 +4333,8 @@ _AREA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6863,
-  serialized_end=7003,
+  serialized_start=7322,
+  serialized_end=7462,
 )
 
 
@@ -4142,8 +4405,8 @@ _DUNGEON = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7006,
-  serialized_end=7227,
+  serialized_start=7465,
+  serialized_end=7686,
 )
 
 
@@ -4200,8 +4463,8 @@ _WAVE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7230,
-  serialized_end=7397,
+  serialized_start=7689,
+  serialized_end=7856,
 )
 
 
@@ -4244,8 +4507,8 @@ _MISSIONINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7399,
-  serialized_end=7492,
+  serialized_start=7858,
+  serialized_end=7951,
 )
 
 
@@ -4284,6 +4547,13 @@ _SIGNINFO = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='os_type', full_name='gameprotocol.events.SignInfo.os_type', index=4,
+      number=5, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=1,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -4295,8 +4565,8 @@ _SIGNINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7494,
-  serialized_end=7579,
+  serialized_start=7954,
+  serialized_end=8085,
 )
 
 
@@ -4353,8 +4623,8 @@ _RESOURCEDEFINITION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7582,
-  serialized_end=7718,
+  serialized_start=8088,
+  serialized_end=8224,
 )
 
 
@@ -4376,8 +4646,8 @@ _RESOURCEUPDATERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7720,
-  serialized_end=7744,
+  serialized_start=8226,
+  serialized_end=8250,
 )
 
 
@@ -4406,8 +4676,8 @@ _RESOURCEUPDATERLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7746,
-  serialized_end=7822,
+  serialized_start=8252,
+  serialized_end=8328,
 )
 
 
@@ -4485,8 +4755,8 @@ _GLOBALCONFIGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7825,
-  serialized_end=8319,
+  serialized_start=8331,
+  serialized_end=8825,
 )
 
 
@@ -4529,8 +4799,8 @@ _PLAYERLEVELDEFINITION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8321,
-  serialized_end=8395,
+  serialized_start=8827,
+  serialized_end=8901,
 )
 
 
@@ -4580,8 +4850,8 @@ _CRAFTINGMATERIALDEFINITION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8398,
-  serialized_end=8559,
+  serialized_start=8904,
+  serialized_end=9065,
 )
 
 
@@ -4631,8 +4901,8 @@ _EVOLUTIONDEFINITION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8562,
-  serialized_end=8749,
+  serialized_start=9068,
+  serialized_end=9255,
 )
 
 
@@ -4668,8 +4938,8 @@ _CMATERIALAMOUNT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8751,
-  serialized_end=8797,
+  serialized_start=9257,
+  serialized_end=9303,
 )
 
 
@@ -4705,8 +4975,8 @@ _CELEMENTALMATERIALAMOUNT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8799,
-  serialized_end=8854,
+  serialized_start=9305,
+  serialized_end=9360,
 )
 
 
@@ -4847,8 +5117,8 @@ _FUSINGPARAMS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8857,
-  serialized_end=9359,
+  serialized_start=9363,
+  serialized_end=9865,
 )
 
 
@@ -4891,8 +5161,8 @@ _SELLINGPARAMS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9361,
-  serialized_end=9424,
+  serialized_start=9867,
+  serialized_end=9930,
 )
 
 
@@ -4942,8 +5212,8 @@ _CREATURELEVELPARAMS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9426,
-  serialized_end=9542,
+  serialized_start=9932,
+  serialized_end=10048,
 )
 
 
@@ -4993,8 +5263,8 @@ _FAERYDEFINITION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9545,
-  serialized_end=9684,
+  serialized_start=10051,
+  serialized_end=10190,
 )
 
 
@@ -5058,8 +5328,8 @@ _FAERYSTAT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9686,
-  serialized_end=9799,
+  serialized_start=10192,
+  serialized_end=10305,
 )
 
 
@@ -5123,8 +5393,8 @@ _PRODUCTINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9801,
-  serialized_end=9906,
+  serialized_start=10307,
+  serialized_end=10412,
 )
 
 
@@ -5146,8 +5416,8 @@ _PRODUCTSREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9908,
-  serialized_end=9921,
+  serialized_start=10414,
+  serialized_end=10427,
 )
 
 
@@ -5183,8 +5453,8 @@ _PRODUCTSRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9923,
-  serialized_end=10050,
+  serialized_start=10430,
+  serialized_end=10561,
 )
 
 
@@ -5220,8 +5490,8 @@ _PURCHASEREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10052,
-  serialized_end=10095,
+  serialized_start=10563,
+  serialized_end=10606,
 )
 
 
@@ -5278,8 +5548,8 @@ _TRANSACTIONINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10098,
-  serialized_end=10283,
+  serialized_start=10609,
+  serialized_end=10792,
 )
 
 
@@ -5308,8 +5578,8 @@ _PURCHASERESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10285,
-  serialized_end=10358,
+  serialized_start=10794,
+  serialized_end=10867,
 )
 
 _SIMPLERESPONSE.fields_by_name['result_code'].enum_type = _RESULTCODE
@@ -5334,8 +5604,9 @@ _BATTLEBEGINREP.fields_by_name['result_code'].enum_type = _BATTLEBEGINREPRESULTC
 _BATTLEBEGINREP.fields_by_name['enemy_egg'].message_type = _EGG
 _BATTLEBEGINREP.fields_by_name['boss_egg'].message_type = _EGG
 _BATTLEBEGINREP.fields_by_name['clear_egg'].message_type = _EGG
-_BATTLEBEGINREP.fields_by_name['speed_egg'].message_type = _EGG
+_BATTLEBEGINREP.fields_by_name['speed_egg'].message_type = _COMPOSEDEGG
 _BATTLEBEGINREP.fields_by_name['luck_egg'].message_type = _EGG
+_BATTLEBEGINREP.fields_by_name['dungeon_egg'].message_type = _EGG
 _BATTLEENDREP.fields_by_name['result_code'].enum_type = _RESULTCODE
 _HELPER.fields_by_name['player_info'].message_type = _PLAYERINFO
 _HELPER.fields_by_name['creature'].message_type = _CREATUREINSTANCE
@@ -5364,9 +5635,11 @@ _SELLCREATUREREP.fields_by_name['result_code'].enum_type = _SELLCREATURERESULTCO
 _GACHASHAKEREP.fields_by_name['result_code'].enum_type = _RESULTCODE
 _GACHASHAKEREP.fields_by_name['egg'].message_type = _EGG
 _ADDENERGYREP.fields_by_name['result_code'].enum_type = _ADDENERGYRESULTCODE
+_BUYCREATURESPACEREP.fields_by_name['result_code'].enum_type = _BUYCREATURESPACERESULTCODE
+_CONVERTMATERIALREP.fields_by_name['result_code'].enum_type = _CONVERTMATERIALRESULTCODE
 _PLAYERINFO.fields_by_name['teams'].message_type = _TEAM
 _PLAYERINFO.fields_by_name['creaturebox'].message_type = _CREATUREINSTANCE
-_PLAYERINFO.fields_by_name['materialbox'].message_type = _MATERIALINFO
+_PLAYERINFO.fields_by_name['materialbox'].message_type = _MATERIALDATA
 _PLAYERINFO.fields_by_name['boost'].message_type = _BOOSTINFO
 _PLAYERINFO.fields_by_name['evolves'].message_type = _EVOLVEINFO
 _PLAYERINFO.fields_by_name['missions'].message_type = _MISSIONINST
@@ -5375,6 +5648,7 @@ _CAPITAL.fields_by_name['eggs'].message_type = _EGG
 _EGG.fields_by_name['rank'].enum_type = _EGGRANK
 _EGG.fields_by_name['type'].enum_type = _EGGTYPE
 _EGG.fields_by_name['creature'].message_type = _CREATUREINSTANCE
+_COMPOSEDEGG.fields_by_name['egg'].message_type = _EGG
 _CREATURETYPE.fields_by_name['bounceType'].enum_type = _BOUNCETYPE
 _CREATURETYPE.fields_by_name['race'].enum_type = _RACE
 _CREATURETYPE.fields_by_name['element'].enum_type = _ELEMENT
@@ -5396,6 +5670,7 @@ _DUNGEON.fields_by_name['reward'].message_type = _CAPITAL
 _WAVE.fields_by_name['enemies'].message_type = _CREATUREINSTANCE
 _WAVE.fields_by_name['boss'].message_type = _CREATUREINSTANCE
 _MISSIONINFO.fields_by_name['rewards'].message_type = _CAPITAL
+_SIGNINFO.fields_by_name['os_type'].enum_type = _OSTYPE
 _RESOURCEDEFINITION.fields_by_name['type'].enum_type = _RESOURCETYPE
 _RESOURCEUPDATERLIST.fields_by_name['list'].message_type = _RESOURCEDEFINITION
 _GLOBALCONFIGS.fields_by_name['playerLevel'].message_type = _PLAYERLEVELDEFINITION
@@ -5411,9 +5686,9 @@ _EVOLUTIONDEFINITION.fields_by_name['cost'].message_type = _CMATERIALAMOUNT
 _EVOLUTIONDEFINITION.fields_by_name['elementalCost'].message_type = _CELEMENTALMATERIALAMOUNT
 _FAERYDEFINITION.fields_by_name['element'].enum_type = _ELEMENT
 _FAERYDEFINITION.fields_by_name['stats'].message_type = _FAERYSTAT
-_PRODUCTSRESP.fields_by_name['result_code'].enum_type = _GET_PRODUCTS_CODE
+_PRODUCTSRESP.fields_by_name['result_code'].enum_type = _GETPRODUCTSRESULTCODE
 _PRODUCTSRESP.fields_by_name['products'].message_type = _PRODUCTINFO
-_TRANSACTIONINFO.fields_by_name['result_code'].enum_type = _PURCHASE_RESULT_CODE
+_TRANSACTIONINFO.fields_by_name['result_code'].enum_type = _PURCHASERESULTCODE
 _TRANSACTIONINFO.fields_by_name['product_Info'].message_type = _PRODUCTINFO
 _PURCHASERESP.fields_by_name['trans_infos'].message_type = _TRANSACTIONINFO
 DESCRIPTOR.message_types_by_name['Echo'] = _ECHO
@@ -5464,11 +5739,15 @@ DESCRIPTOR.message_types_by_name['AddEnergy'] = _ADDENERGY
 DESCRIPTOR.message_types_by_name['AddEnergyRep'] = _ADDENERGYREP
 DESCRIPTOR.message_types_by_name['BuyCreatureSpace'] = _BUYCREATURESPACE
 DESCRIPTOR.message_types_by_name['BuyCreatureSpaceRep'] = _BUYCREATURESPACEREP
+DESCRIPTOR.message_types_by_name['ConvertMaterial'] = _CONVERTMATERIAL
+DESCRIPTOR.message_types_by_name['ConvertMaterialRep'] = _CONVERTMATERIALREP
 DESCRIPTOR.message_types_by_name['PlayerInfo'] = _PLAYERINFO
 DESCRIPTOR.message_types_by_name['Team'] = _TEAM
 DESCRIPTOR.message_types_by_name['CreatureInstance'] = _CREATUREINSTANCE
 DESCRIPTOR.message_types_by_name['Capital'] = _CAPITAL
 DESCRIPTOR.message_types_by_name['Egg'] = _EGG
+DESCRIPTOR.message_types_by_name['ComposedEgg'] = _COMPOSEDEGG
+DESCRIPTOR.message_types_by_name['MaterialData'] = _MATERIALDATA
 DESCRIPTOR.message_types_by_name['MaterialInfo'] = _MATERIALINFO
 DESCRIPTOR.message_types_by_name['BoostInfo'] = _BOOSTINFO
 DESCRIPTOR.message_types_by_name['EvolveInfo'] = _EVOLVEINFO
@@ -5526,14 +5805,16 @@ DESCRIPTOR.enum_types_by_name['EvolveResultCode'] = _EVOLVERESULTCODE
 DESCRIPTOR.enum_types_by_name['AscendResultCode'] = _ASCENDRESULTCODE
 DESCRIPTOR.enum_types_by_name['SellCreatureResultCode'] = _SELLCREATURERESULTCODE
 DESCRIPTOR.enum_types_by_name['AddEnergyResultCode'] = _ADDENERGYRESULTCODE
+DESCRIPTOR.enum_types_by_name['ConvertMaterialResultCode'] = _CONVERTMATERIALRESULTCODE
+DESCRIPTOR.enum_types_by_name['BuyCreatureSpaceResultCode'] = _BUYCREATURESPACERESULTCODE
 DESCRIPTOR.enum_types_by_name['EggRank'] = _EGGRANK
 DESCRIPTOR.enum_types_by_name['EggType'] = _EGGTYPE
 DESCRIPTOR.enum_types_by_name['TriggerType'] = _TRIGGERTYPE
 DESCRIPTOR.enum_types_by_name['EffectType'] = _EFFECTTYPE
 DESCRIPTOR.enum_types_by_name['ResourceType'] = _RESOURCETYPE
-DESCRIPTOR.enum_types_by_name['OS_TYPE'] = _OS_TYPE
-DESCRIPTOR.enum_types_by_name['GET_PRODUCTS_CODE'] = _GET_PRODUCTS_CODE
-DESCRIPTOR.enum_types_by_name['PURCHASE_RESULT_CODE'] = _PURCHASE_RESULT_CODE
+DESCRIPTOR.enum_types_by_name['OSType'] = _OSTYPE
+DESCRIPTOR.enum_types_by_name['GetProductsResultCode'] = _GETPRODUCTSRESULTCODE
+DESCRIPTOR.enum_types_by_name['PurchaseResultCode'] = _PURCHASERESULTCODE
 
 Echo = _reflection.GeneratedProtocolMessageType('Echo', (_message.Message,), dict(
   DESCRIPTOR = _ECHO,
@@ -5871,6 +6152,20 @@ BuyCreatureSpaceRep = _reflection.GeneratedProtocolMessageType('BuyCreatureSpace
   ))
 _sym_db.RegisterMessage(BuyCreatureSpaceRep)
 
+ConvertMaterial = _reflection.GeneratedProtocolMessageType('ConvertMaterial', (_message.Message,), dict(
+  DESCRIPTOR = _CONVERTMATERIAL,
+  __module__ = 'protocol_pb2'
+  # @@protoc_insertion_point(class_scope:gameprotocol.events.ConvertMaterial)
+  ))
+_sym_db.RegisterMessage(ConvertMaterial)
+
+ConvertMaterialRep = _reflection.GeneratedProtocolMessageType('ConvertMaterialRep', (_message.Message,), dict(
+  DESCRIPTOR = _CONVERTMATERIALREP,
+  __module__ = 'protocol_pb2'
+  # @@protoc_insertion_point(class_scope:gameprotocol.events.ConvertMaterialRep)
+  ))
+_sym_db.RegisterMessage(ConvertMaterialRep)
+
 PlayerInfo = _reflection.GeneratedProtocolMessageType('PlayerInfo', (_message.Message,), dict(
   DESCRIPTOR = _PLAYERINFO,
   __module__ = 'protocol_pb2'
@@ -5905,6 +6200,20 @@ Egg = _reflection.GeneratedProtocolMessageType('Egg', (_message.Message,), dict(
   # @@protoc_insertion_point(class_scope:gameprotocol.events.Egg)
   ))
 _sym_db.RegisterMessage(Egg)
+
+ComposedEgg = _reflection.GeneratedProtocolMessageType('ComposedEgg', (_message.Message,), dict(
+  DESCRIPTOR = _COMPOSEDEGG,
+  __module__ = 'protocol_pb2'
+  # @@protoc_insertion_point(class_scope:gameprotocol.events.ComposedEgg)
+  ))
+_sym_db.RegisterMessage(ComposedEgg)
+
+MaterialData = _reflection.GeneratedProtocolMessageType('MaterialData', (_message.Message,), dict(
+  DESCRIPTOR = _MATERIALDATA,
+  __module__ = 'protocol_pb2'
+  # @@protoc_insertion_point(class_scope:gameprotocol.events.MaterialData)
+  ))
+_sym_db.RegisterMessage(MaterialData)
 
 MaterialInfo = _reflection.GeneratedProtocolMessageType('MaterialInfo', (_message.Message,), dict(
   DESCRIPTOR = _MATERIALINFO,
