@@ -20,6 +20,7 @@ from models.player import DeviceLink
 from models.player import Player
 from models.player import Session
 from configs.world import World
+from stats import DeltaSignIn
 
 
 def get_account():
@@ -155,38 +156,49 @@ class BaseLogin(BaseAuth):
         device.store()
 
     def handle_login(self, msg):
+        request = msg.get('request')
+        ip = request.remote_addr
+        data = {'player': {}, 'client': {'ip_address': ip}}
+        msg = msg.get('data')
         resp = LoginAccountRep()
         # update previous device_id to new device_id
         self.update_old_device_id(msg)
-
         device_player = self.get_player_by_device(msg.device_id)
+        if device_player: log.info(device_player.id)
         if msg.pip_id:
             pip_player = self.get_player_by_pip(msg.pip_id)
             if device_player and device_player.exist():
                 if pip_player and pip_player.exist():
                     player = pip_player
+                    data['action'] = 'sign_in_device_pip'
                     if device_player.id != player.id:
                         # device not match pip player
                         # redirect device to pip player.
                         self.update_device_player_id(msg.device_id, player.id)
+                        data['action'] = 'switch_device'
                 else:
                     # create new account for pip and link device to it
                     player = self.init_player(msg)
                     self.update_device_player_id(msg.device_id, player.id)
+                    data['action'] = 'switch_account'
             else:
                 if pip_player and pip_player.exist():
                     player = pip_player
+                    data['action'] = 'sign_in_pip'
                 else:
                     # create new account
                     player = self.init_player(msg)
+                    data['action'] = 'sign_up_pip'
                 self.init_device_link(msg.device_id, player.id)
             self.generate_session(player.id)
         else:
             player = device_player
+            data['action'] = 'sign_in_device'
             if not (player and player.exist()):
                 # create new account
                 player = self.init_player(msg)
                 self.init_device_link(msg.device_id, player.id)
+                data['action'] = 'sign_up_device'
 
         player.login_time = datetime.now()
         if msg.info.os_type:
@@ -202,7 +214,9 @@ class BaseLogin(BaseAuth):
         resp.session_id = session.id
         resp.player_info.CopyFrom(World.GetPlayerInfo(player))
         resp.result_code = LoginAccountResultCode.Value("LOGIN_ACC_SUCCESS")
-        return resp
+
+        data['player']['session'] = session.id
+        return resp, (DeltaSignIn, data, player, msg.client)
 
 
 class BaseLinkAccount(BaseAuth):
@@ -379,20 +393,21 @@ class Account(ParentActor):
         return self.resp(resp)
 
     def LoginAccount(self, msg):
-        log.info("Login account receive %s" % msg)
-        handler = self.login_map.get(msg.type)
+        data = msg.get('data')
+        log.info("Login account receive %s" % data)
+        handler = self.login_map.get(data.type)
         if handler:
-            resp = handler.handle_login(msg)
+            resp, event = handler.handle_login(msg)
+            self.send_event(*event)
         else:
             resp = LoginAccountRep()
-            if msg.type in SignType.values():
+            if data.type in SignType.values():
                 resp.result_code = LoginAccountResultCode.Value(
                     "LOGIN_ACC_DISABLED_SIGN_TYPE")
             else:
                 resp.result_code = LoginAccountResultCode.Value(
                     "LOGIN_ACC_MISSING_SIGN_TYPE")
         return self.resp(resp)
-
 
 class LinkAccount(ChildActor):
     link_acc_map = {SignType.Value("APPLE"): LinkAGC(),

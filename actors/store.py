@@ -28,11 +28,12 @@ class ProductsListActor(ChildActor):
         if ProductsList.is_valid_os_type(os_type):
             resp.result_code = GetProductsResultCode.Value(
                 "GET_PRODUCTS_SUCCESS")
-            resp.products = ProductsList().get_products_list(os_type)
+            resp.products.extend(
+                ProductsList.instance().get_products_list(os_type))
         else:
             resp.result_code = GetProductsResultCode.Value(
                 "NOT_SUPPORTED_DEVICE")
-        self.resp(resp)
+        return self.resp(resp)
 
     @MessageHandlerWrapper(PurchaseResp, PurchaseResultCode.Value(
         "PURCHASE_INVALID_SESSION"))
@@ -50,4 +51,4 @@ class ProductsListActor(ChildActor):
             handler = self.purchase_handle_map.get(p_info.os_type)
             resp.trans_infos.extend(handler.handle_purchase(
                 user_id, p_info, msg))
-        self.resp(resp)
+        return self.resp(resp)

@@ -1,9 +1,10 @@
 #!/usr/bin/python
+import time
 
 from types import FunctionType
 from pykka import ActorRegistry
 from pykka.gevent import GeventActor
-from stats import StatsActor
+from stats import StatsActor, get_event_type
 
 from utils.misc import generate_message
 
@@ -27,12 +28,31 @@ class BaseActor(GeventActor):
     def resp(self, msg):
         return generate_message(msg)
 
-    def send_event(self, event, data):
-        msg = {"event": event, "data": data}
+    def send_event(self, event_name, data, player=None, client=None):
+        if player:
+            data['player'].update(player.get_stats_data())
+        if client:
+            c = data.get('client', {})
+            c['device_type'] = client.device_type
+            c['conn_type'] = client.conn_type
+            c['client_timestamp'] = client.client_timestamp
+            c['client_version'] = client.client_version
+            c['device_os'] = client.device_os
+            c['device_os_version'] = client.device_os_version
+            c['openudid'] = client.openudid
+            c['odin'] = client.odin
+            c['mac_address'] = client.mac_address
+            c['ios_ifa'] = client.ios_ifa
+            c['android_id'] = client.android_id
+            c['imei'] = client.imei
+            c['android_ifa'] = client.android_ifa
+            data['client'] = c
+        msg = {"event_name": event_name,
+               "timestamp": time.time(),
+               "data": data}
         actor = ActorRegistry.get_by_class(StatsActor)
         actor = actor and actor[0] or StatsActor.start()
         actor.tell(msg)
-
 
 class ActorMeta(type):
     base_func = dir(BaseActor)

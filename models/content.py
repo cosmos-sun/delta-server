@@ -5,40 +5,9 @@ from dal.base import IntAttr, ListAttr, PickleAttr, TextAttr
 from utils import log
 from utils import protocol_pb2 as proto
 from utils.protocol_pb2 import Element
-
+from utils.misc import assign_value
 OID = 0
 
-def build_enum_type(name):
-    return '_' + name.upper()
-
-def assign_value(inst, data):
-    for name, value in inst.DESCRIPTOR.fields_by_name.items():
-        if not data or name not in data:
-            continue
-        attr = getattr(inst, name)
-        if hasattr(attr, 'DESCRIPTOR'):
-            assign_value(attr, data[name])
-        else:
-            if type(data[name]) is list:
-                l = []
-                if hasattr(value.message_type, 'name') and getattr(value.message_type, 'name') is not None:
-                    cls = getattr(proto, value.message_type.name)
-                    for d in data[name]:
-                        sub_inst = cls()
-                        assign_value(sub_inst, d)
-                        l.append(sub_inst)
-                else:
-                    for d in data[name]:
-                        l.append(d)
-                getattr(inst, name).extend(l)
-            else:
-                if hasattr(inst.DESCRIPTOR.fields_by_name[name], 'enum_type') and getattr(inst.DESCRIPTOR.fields_by_name[name], 'enum_type') is not None:
-                        enum_type = getattr(inst.DESCRIPTOR.fields_by_name[name], 'enum_type').name
-                        enum_inst = getattr(proto, build_enum_type(enum_type))
-                        d = enum_inst.values_by_name[data[name]].number
-                        setattr(inst, name, d)
-                else:
-                    setattr(inst, name, data[name])
 
 
 class Content(Base):
@@ -169,13 +138,26 @@ class GameRule(object):
                     if conversion:
                         cls.material_conversion[slug] = conversion
 
+                # build faeries dict
+                for i in cls.configs.get('faeries'):
+                    cls.faerie_types[i['slug']] = i
+                    cls.faerie_element_tier[i['element'] + str(i['tier'])] = i
+                # build material dict
+                for i in cls.configs.get('craftingMaterial'):
+                    cls.materials_element_tier[i['element'] + str(i['tier'])] = i['slug']
+                #build gacha machines
+                for i in cls.configs.get('gatchaMachine'):
+                    cls.gacha_list[i['slug']] = []
+                    for drop in i['drops']:
+                        cls.gacha_list[i['slug']].extend([drop['creatureSlug']] * drop['weight'])
+
             # load creature from db
             if cls.content.creature_types:
                 for t in cls.content.creature_types:
                     d = proto.CreatureType()
                     assign_value(d, simplejson.loads(t))
                     #TODO: only for sampleworld
-                    if d.displayID < 500:
+                    if d.displayID < 400:
                         continue
                     #==========================
                     cls.creature_types_proto.append(d)
@@ -240,18 +222,7 @@ class GameRule(object):
                         orig_series.extend(evolve_series)
                         for _slug in evolve_series:
                             cls.creature_series[_slug] = orig_series
-            # build faeries dict
-            for i in cls.configs.get('faeries'):
-                cls.faerie_types[i['slug']] = i
-                cls.faerie_element_tier[i['element'] + str(i['tier'])] = i
-            # build material dict
-            for i in cls.configs.get('craftingMaterial'):
-                cls.materials_element_tier[i['element'] + str(i['tier'])] = i['slug']
-            #build gacha machines
-            for i in cls.configs.get('gatchaMachine'):
-                cls.gacha_list[i['slug']] = []
-                for drop in i['drops']:
-                    cls.gacha_list[i['slug']].extend([drop['creatureSlug']] * drop['weight'])
+
             ## build gacha trees slug list, mocked now
             #for tree, data in cls.gacha_trees.iteritems():
             #    cls.gacha_list[tree] = []

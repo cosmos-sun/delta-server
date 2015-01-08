@@ -21,6 +21,15 @@ from utils.misc import parse_message
 app = Bottle()
 
 
+
+def build_request_message(request):
+    msg = {'func': request.forms.get('name'),
+           'msg': {
+               'data': parse_message(request.forms.get('name'), request.forms.get('body')),
+               'request': request}
+    }
+    return msg
+
 def build_message(request):
     msg = {'func': request.forms.get('name'),
            'msg': parse_message(request.forms.get('name'),
@@ -33,7 +42,7 @@ def _test():
 
 @app.route('/account/', method='POST')
 def _account():
-    msg = build_message(request)
+    msg = build_request_message(request)
     account = get_account()
     resp = account.ask(msg)
     return resp
@@ -53,7 +62,6 @@ def _sendAssetBundle(pid, filename):
     log.debug('sending asset: ', settings.ASSET_BUNDLE_ROOT, filename)
     return static_file(filename, root=settings.ASSET_BUNDLE_ROOT)
 
-
 def run_server():
     host = settings.LISTEN_HOST
     port = settings.LISTEN_PORT
@@ -67,14 +75,14 @@ def run_server():
 def prepare():
     log.info('prepare content')
     try:
-        content.main()
+        content.main(action='extract')
+        create_sample_players()
     except Exception, e:
         log.warning('can not extract content: %s', e)
 
 if __name__ == '__main__':
     # ALTERNATIVES: use nodemon (nodejs app) or Bottle's auto-reload
-    #prepare()
-    create_sample_players()
+    prepare()
     import server_reloader
     def hook(): log.warning("reloading code")
     server_reloader.main(run_server, before_reload=hook)

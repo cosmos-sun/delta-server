@@ -15,16 +15,15 @@ class PurchaseItem(Base):
     def __init__(self, p_id, price=None, currency=None, quantity=None):
         if not p_id:
             raise InvalidPurchaseItem("Missing pid")
-        self.p_id = p_id
         if not price:
             raise InvalidPurchaseItem("Missing price")
-        self.price = price
         if not currency:
             raise InvalidPurchaseItem("Missing currency")
-        self.currency = currency
         if not quantity:
             raise InvalidPurchaseItem("Missing quantity")
-        self.quantity = quantity
+        super(PurchaseItem, self).__init__(p_id=p_id, price=price,
+                                           currency=currency,
+                                           quantity=quantity)
 
     def to_protocal(self):
         proto = ProductInfo()
@@ -47,7 +46,7 @@ class ProductsList(object):
     @classmethod
     def instance(cls):
         # Use instance to ensure purchase items been loaded.
-        if not cls.instance:
+        if not cls.__instance:
             cls.__instance = cls()
             for os_type, products in PURCHASE_ITEMS.iteritems():
                 products_list = []

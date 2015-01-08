@@ -9,9 +9,11 @@ LISTEN_PORT = 8088
 
 COUCHBASE_BUCKET = os.getenv("COUCHBASE_BUCKET", "default")
 COUCHBASE_HOST = os.getenv("COUCHBASE_HOST",
-    os.getenv("COUCHBASE_PORT_8091_TCP_ADDR", "10.21.2.63"))
+    os.getenv("COUCHBASE_PORT_8091_TCP_ADDR", "localhost"))
 
 ASSET_BUNDLE_ROOT = os.getenv("ASSET_BUNDLE_ROOT", "/opt/assetbundle")  # must be absolute path
+
+TEST_MODE = False
 
 USE_CACHE = False  # True
 
@@ -61,3 +63,8 @@ PURCHASE_ITEMS = {
 STATS_ZMQ_HOST = "127.0.0.1"
 STATS_ZMQ_PORT = 5556
 # ============= Stats settings end ==================
+
+try:
+    from local_settings import *
+except Exception, e:
+    pass

@@ -17,7 +17,7 @@ from utils import log
 
 def get_player(session_id):
     session = Session(id=session_id).load()
-    if session:
+    if session and session.exist():
         session.refresh_session()
         pid = session.player_id
     else:
@@ -25,14 +25,15 @@ def get_player(session_id):
 
     player = ActorRegistry.get_by_urn(pid)
     if player is None:
-        player = Player.start(pid)
+        player = Player.start(pid, session_id)
     return player
 
 
 class Player(ParentActor):
-    def __init__(self, pid=None):
+    def __init__(self, pid=None, session_id=None):
         super(Player, self).__init__(pid)
         self.pid = pid
+        self.session_id = session_id
         self.game = None
         self._player = None
 

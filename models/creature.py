@@ -7,14 +7,15 @@ from models.content import GameRule
 
 
 class CreatureInstance(Base):
-    _oid_key = "c_id"
+    _oid_key = "cid"
     _index_attributes = ["player_id"]
     _parent_key = "player_id"
     _loaded = False
     _type = None
+    cid_key_tpl = "creature_id:%s"
 
     player_id = IntAttr()
-    c_id = IntAttr()
+    cid = IntAttr()
 
     slug = TextAttr()
     xp = IntAttr()
@@ -25,7 +26,7 @@ class CreatureInstance(Base):
     plusLuck = IntAttr()
 
     def get_id(self, pid):
-        id_count = KeyValue('creature_id:%s' % pid)
+        id_count = KeyValue(self.cid_key_tpl % pid)
         return id_count.incr(1, initial=1)
 
     def _save(self, slug, level=1, xp=0, plus_hp=0, plus_attack=0,
@@ -42,7 +43,7 @@ class CreatureInstance(Base):
 
     def create(self, slug, level=1, xp=0,
                plusHP=0, plusAttack=0, plusSpeed=0, plusLuck=0):
-        self.c_id = self.get_id(self.player_id)
+        self.cid = self.get_id(self.player_id)
         self._save(slug, level, xp, plusHP, plusAttack, plusSpeed, plusLuck)
         return self
 
@@ -62,7 +63,7 @@ class CreatureInstance(Base):
 
     def to_proto_class(self):
         c = CreatureProto()
-        c.cid = self.c_id
+        c.cid = self.cid
         c.slug = self.slug
         c.xp = self.xp
         c.level = self.level
@@ -254,6 +255,9 @@ class CreatureInstance(Base):
             raise CreatureDisabledAction(slug=self.slug, action="transcend")
         self._upgrade(transcend_slug)
 
+    def get_stats_data(self):
+        #TODO: keep this same to proto event, now _data is same structure as proto
+        return self._data.copy()
 
 class CreatureTeam(Base):
     _oid_key = "player_id"
@@ -282,6 +286,7 @@ class CreatureTeam(Base):
     @classmethod
     def store_from_proto(cls, pid, protos):
         t = cls(player_id=pid).load()
+        old_teams = [t.team1, t.team2, t.team3, t.team4, t.team5]
         length = len(protos)
         t.team1 = [i for i in protos[0].creaturesIds] if length >= 1 else [0,0,0]
         t.team2 = [i for i in protos[1].creaturesIds] if length >= 2 else [0,0,0]
@@ -290,6 +295,14 @@ class CreatureTeam(Base):
         t.team5 = [i for i in protos[4].creaturesIds] if length >= 5 else [0,0,0]
 
         t.store()
+
+        new_teams = [t.team1, t.team2, t.team3, t.team4, t.team5]
+        ret = []
+        for i, j in zip(old_teams, new_teams):
+            if i != j:
+                ret.append({'old':{'creature_id': i}, 'new':{'creature_id': j}})
+
+        return ret
 
     @classmethod
     def get_proto_class(cls, pid, proto):

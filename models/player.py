@@ -12,6 +12,7 @@ from utils.protocol_pb2 import MaterialData
 from utils.protocol_pb2 import OSType
 from utils.protocol_pb2 import PlayerInfo
 from utils.settings import SESSION_TTL_DELTA
+from utils.settings import TEST_MODE
 from models.content import GameRule
 
 id_count = KeyValue('id_count')
@@ -139,7 +140,10 @@ class Player(Base):
         return self.set_info(player_info, simple_mode)
 
     def delete(self):
-        raise UnsupportedPlayerAction("Can't delete player instance.")
+        if TEST_MODE:
+            super(Player, self).delete()
+        else:
+            raise UnsupportedPlayerAction("Can't delete player instance.")
 
     def get_help_creature(self):
         """
@@ -149,7 +153,7 @@ class Player(Base):
         teams = CreatureTeam(player_id=self.id)
         active_team = teams.get_active_team()
         if active_team:
-            data = {"c_id": active_team[0],
+            data = {"cid": active_team[0],
                     "player_id": self.id}
             creature = CreatureInstance(**data).load()
         else:
@@ -251,6 +255,14 @@ class Player(Base):
 
     def get_os_type(self):
         return self.os_type or OSType.Value("IOS")
+
+    def get_stats_data(self):
+        ret = self._data.copy()
+        ret.pop('login_time')
+        ret.pop('energy_update_time')
+        ret.pop('achievements')
+        ret['energy'] = self.get_energy()
+        return ret
 
 
 class Session(Base):

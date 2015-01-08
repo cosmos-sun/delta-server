@@ -1,11 +1,11 @@
 #!/usr/bin/python
 
-import os, sys,random
+import os, sys, time
 from utils import protocol_pb2 as proto
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from models.content import GameRule, assign_value
+from models.content import GameRule
 from base_actor import ChildActor
 from base_actor import MessageHandlerWrapper
 from configs.world import World
@@ -28,7 +28,11 @@ from utils.protocol_pb2 import FuseResultCode
 from utils.protocol_pb2 import SellCreatureRep
 from utils.protocol_pb2 import SellCreatureResultCode
 from utils import log
-
+from utils.misc import assign_value
+from stats import DeltaBattleBegin, DeltaBattleEnd, DeltaEditTeam, DeltaFuse,\
+                  DeltaEvolve, DeltaSellCreature, DeltaGacha, DeltaAddEnergy,\
+                  DeltaConvertMaterial, DeltaBuyCreatureSpace, DeltaRevenueIAP,\
+                  DeltaRevenueIAB
 
 class Game(ChildActor):
     def __init__(self, parent):
@@ -61,6 +65,8 @@ class Game(ChildActor):
     @MessageHandlerWrapper(proto.BattleBeginRep,
                            proto.BattleBeginRepResultCode.Value("BATTLE_BEGIN_INVALID_SESSION"))
     def BattleBegin(self, msg):
+        def get_battle_key():
+            return int(time.time() * 1000000)
         rep = proto.BattleBeginRep()
         if self.mockup:
             rep.DungeonId=100
@@ -72,6 +78,7 @@ class Game(ChildActor):
         else:
             pid = self.parent.pid
             player = self.parent.player
+            event_data = {'player':{'session': self.parent.session_id}}
             dungeon = GameRule.dungeons[msg.dungeonSlug]
             if player.get_energy() < dungeon['requirement']['energy']:
                 rep.result_code = proto.BattleBeginRepResultCode.Value('BATTLE_BEGIN_FAIL_ENERGY')
@@ -112,7 +119,17 @@ class Game(ChildActor):
             if not player.spend_energy(dungeon['requirement']['energy'], do_store=True):
                 rep.result_code = proto.BattleBeginRepResultCode.Value('BATTLE_BEGIN_FAIL_ENERGY')
                 return self.resp(rep)
+            battle_key = get_battle_key()
+            battle_reward.key = battle_key
             battle_reward.store()
+            rep.battle_key = battle_key
+
+            event_data['zone'] = msg.zoneSlug
+            event_data['area'] = msg.areaSlug
+            event_data['dungeon'] = msg.dungeonSlug
+            event_data['battle_key'] = battle_key
+            self.send_event(DeltaBattleBegin, event_data, player)
+
         rep.result_code = proto.BattleBeginRepResultCode.Value('BATTLE_BEGIN_SUCCESS')
         return self.resp(rep)
 
@@ -120,27 +137,52 @@ class Game(ChildActor):
                            proto.ResultCode.Value("INVALID_SESSION"))
     def BattleEnd(self, msg):
         rep = proto.BattleEndRep()
+        event_data = {
+            'player':{'session': self.parent.session_id,
+                      'id': self.parent.pid},
+            'zone': msg.zoneSlug,
+            'area': msg.areaSlug,
+            'dungeon': msg.dungeonSlug,
+            'battle_key': msg.battle_key,
+            'turns': msg.turns,
+            #TODO: add active team to battle end messge, 'team':[]
+        }
+        player = None
         if self.mockup:
             rep.xp=msg.score/2
         else:
             reward = BattleReward(player_id=self.parent.pid).load()
-            if reward.player_id is None or reward.dungeon_slug != msg.dungeonSlug:
+            if reward.player_id is None or reward.dungeon_slug != msg.dungeonSlug: #TODO change check dungeonslug to check battle_key
                 rep.result_code = proto.ResultCode.Value("FAILED")
+                event_data['result_code'] = "NOT_FOUND"
+                self.send_event(DeltaBattleEnd, event_data)
                 return self.resp(rep)
             if msg.win:
-                reward.pay(msg.turns)
+                pay_data, player = reward.pay(msg.turns)
                 rep.result_code = proto.ResultCode.Value('SUCCESS')
+                event_data['result_code'] = 'SUCCESS'
+                event_data.update(pay_data)
             else:
                 rep.result_code = proto.ResultCode.Value('FAILED')
+                event_data['result_code'] = "FAILED"
             reward.delete()
+
+            self.send_event(DeltaBattleEnd, event_data, player)
         return self.resp(rep)
 
     @MessageHandlerWrapper(proto.SimpleResponse,
                            proto.ResultCode.Value("INVALID_SESSION"))
     def EditTeam(self, msg):
-        CreatureTeam.store_from_proto(self.parent.pid, msg.teams)
+        event_data = {
+            'player':{'session': self.parent.session_id,
+                      'id': self.parent.pid},
+        }
+        teams = CreatureTeam.store_from_proto(self.parent.pid, msg.teams)
         rep = proto.SimpleResponse()
         rep.result_code = proto.ResultCode.Value('SUCCESS')
+
+        event_data['teams'] = teams
+        self.send_event(DeltaEditTeam, event_data)
         return self.resp(rep)
 
     @MessageHandlerWrapper(FuseRep,
@@ -149,16 +191,20 @@ class Game(ChildActor):
         log.info("Fuse %s" % msg)
         resp = FuseRep()
         player_id = self.parent.pid
-
+        event_data = {
+            'player':{'session': self.parent.session_id,
+                      'id': self.parent.pid},
+            'feeds': []
+        }
         # verify target
         if not msg.target:
             resp.result_code = FuseResultCode.Value("FUSE_MISSING_TARGET")
             return self.resp(resp)
-        target_c = CreatureInstance(player_id=player_id, c_id=msg.target.cid)
+        target_c = CreatureInstance(player_id=player_id, cid=msg.target.cid)
         if not target_c.exist():
             resp.result_code = FuseResultCode.Value("FUSE_TARGET_NOT_EXIST")
             return self.resp(resp)
-
+        event_data['creature_before'] = target_c.get_stats_data()
         player = self.parent.player
 
         # verify feeders
@@ -178,10 +224,10 @@ class Game(ChildActor):
             if f.cid in feeder_cids:
                 # skip duplicate feeders
                 continue
-            if f.cid == target_c.c_id:
+            if f.cid == target_c.cid:
                 resp.result_code = FuseResultCode.Value("FUSE_FEEDER_SELF")
                 return self.resp(resp)
-            f_c = CreatureInstance(player_id=player_id, c_id=f.cid)
+            f_c = CreatureInstance(player_id=player_id, cid=f.cid)
             if not f_c.exist():
                 resp.result_code = FuseResultCode.Value(
                     "FUSE_FEEDER_NOT_EXIST")
@@ -197,6 +243,8 @@ class Game(ChildActor):
             feeder_plus_attack += f_c.fuse_plus_attack(target_c)
             feeder_plus_speed += f_c.fuse_plus_speed(target_c)
             feeder_plus_luck += f_c.fuse_plus_luck(target_c)
+
+            event_data['feeds'].append(f.get_stats_data())
 
         # verify coins
         fuse_currency = target_c.fuse_currency() * len(feeder_cids)
@@ -214,6 +262,7 @@ class Game(ChildActor):
             feeder_plus_attack *= mega_factor
             feeder_plus_speed *= mega_factor
             feeder_plus_luck *= mega_factor
+            event_data['mega_factor'] = mega_factor
 
         # TODO - save player & level_up & remove_feeder in one transaction.
         # do fuse
@@ -237,16 +286,21 @@ class Game(ChildActor):
                          "new_plus_speed": target_c.plusSpeed,
                          "new_plus_luck": target_c.plusLuck})
         for f_cid in feeder_cids:
-            fc = CreatureInstance(player_id=player_id, c_id=f_cid)
+            fc = CreatureInstance(player_id=player_id, cid=f_cid)
             fc.delete()
             log.info("Player(%s) delete creature(%s slug:%s) to fuse "
                      "creature(cid:%s slug:%s)" %
-                     (player_id, f_cid, fc.slug, target_c.c_id, target_c.slug))
+                     (player_id, f_cid, fc.slug, target_c.cid, target_c.slug))
         log.info("Player(%s) cost %s coins to fuse creature(cid:%s, slug:%s): "
-                 "%s" % (player_id, fuse_currency, target_c.c_id,
+                 "%s" % (player_id, fuse_currency, target_c.cid,
                          target_c.slug, str(log_data)))
         resp.updated_creature.CopyFrom(target_c.to_proto_class())
         resp.got_mega = got_mega
+
+        event_data['creature_after'] = target_c.get_stats_data()
+        event_data['same_element_num'] = same_element_num
+        event_data['coins_cost'] = fuse_currency
+        self.send_event(DeltaFuse, event_data)
         resp.result_code = FuseResultCode.Value("FUSE_SUCCESS")
         return self.resp(resp)
 
@@ -256,12 +310,15 @@ class Game(ChildActor):
         log.info("Evolve %s" % msg)
         resp = EvolveRep()
         player_id = self.parent.pid
-
+        event_data = {
+            'player':{'session': self.parent.session_id,
+                      'id': self.parent.pid},
+        }
         # verify target
         if not msg.target:
             resp.result_code = EvolveResultCode.Value("EVOLVE_MISSING_TARGET")
             return self.resp(resp)
-        target_c = CreatureInstance(player_id=player_id, c_id=msg.target.cid)
+        target_c = CreatureInstance(player_id=player_id, cid=msg.target.cid)
         if not target_c.exist():
             resp.result_code = EvolveResultCode.Value(
                 "EVOLVE_TARGET_NOT_EXIST")
@@ -273,7 +330,7 @@ class Game(ChildActor):
         if not target_c.support_evolve():
             resp.result_code = EvolveResultCode.Value("EVOLVE_DISABLE")
             return self.resp(resp)
-
+        event_data['creature_before'] = target_c.get_stats_data()
         # verify coins
         player = self.parent.player
         evolve_currency = target_c.evolve_currency()
@@ -283,6 +340,7 @@ class Game(ChildActor):
             resp.lack_coins = evolve_currency - player.coins
             return self.resp(resp)
         player.coins -= evolve_currency
+        event_data['coins_cost'] = evolve_currency
 
         # verify material
         material_req = target_c.evolution_materials()
@@ -302,12 +360,16 @@ class Game(ChildActor):
                  (player_id, old_slug, target_c.slug, str(material_req),
                   evolve_currency))
         resp.new_creature.CopyFrom(target_c.to_proto_class())
+
+        event_data['creature_after'] = target_c.get_stats_data()
+        self.send_event(DeltaEvolve, event_data, player)
         resp.result_code = EvolveResultCode.Value("EVOLVE_SUCCESS")
         return self.resp(resp)
 
     @MessageHandlerWrapper(AscendRep,
                            AscendResultCode.Value("ASCEND_INVALID_SESSION"))
     def Ascend(self, msg):
+        #TODO: add stats events when implement this
         log.info("Ascend %s" % msg)
         resp = AscendRep()
         player_id = self.parent.pid
@@ -316,7 +378,7 @@ class Game(ChildActor):
         if not msg.target:
             resp.result_code = AscendResultCode.Value("ASCEND_MISSING_TARGET")
             return self.resp(msg)
-        target_c = CreatureInstance(player_id=player_id, c_id=msg.target.cid)
+        target_c = CreatureInstance(player_id=player_id, cid=msg.target.cid)
         if not target_c.exist():
             resp.result_code = AscendResultCode.Value(
                 "ASCEND_TARGET_NOT_EXIST")
@@ -351,7 +413,7 @@ class Game(ChildActor):
         used_creatures = []
         active_creatures = player.get_active_creatures()
         for f in feeders:
-            if f.c_id == target_c.c_id:
+            if f.cid == target_c.cid:
                 # skip self
                 continue
             if f.cid in active_creatures:
@@ -359,7 +421,7 @@ class Game(ChildActor):
                 continue
             if required_creatures.get(f.slug, 0) > 0:
                 # find one feeder, record it and reduce the requirement.
-                feeder_cids.append(f.c_id)
+                feeder_cids.append(f.cid)
                 required_creatures[f.slug] -= 1
                 used_creatures.append(f.info())
 
@@ -375,11 +437,11 @@ class Game(ChildActor):
         target_c.transcend()
         player.store()
         for f_cid in feeder_cids:
-            fc = CreatureInstance(player_id=player_id, c_id=f_cid)
+            fc = CreatureInstance(player_id=player_id, cid=f_cid)
             fc.delete()
             log.info("Player(%s) delete creature(%s slug:%s) to ascend "
                      "creature(cid:%s slug:%s)" %
-                     (player_id, f_cid, fc.slug, target_c.c_id, target_c.slug))
+                     (player_id, f_cid, fc.slug, target_c.cid, target_c.slug))
         log.info("Player(%s) ascend %s to %s, cost: %s and %s coins" %
                  (player_id, old_slug, target_c.slug, str(used_creatures),
                   ascend_currency))
@@ -393,20 +455,23 @@ class Game(ChildActor):
         log.info("Sell creature: %s" % msg)
         resp = SellCreatureRep()
         player_id = self.parent.pid
-
+        event_data = {
+            'player':{'session': self.parent.session_id,
+                      'id': self.parent.pid},
+        }
         # verify target
         if not msg.target:
             resp.result_code = SellCreatureResultCode.Value(
                 "SELL_MISSING_TARGET")
             return self.resp(resp)
-        on_sale_c = CreatureInstance(player_id=player_id, c_id=msg.target.cid)
+        on_sale_c = CreatureInstance(player_id=player_id, cid=msg.target.cid)
         if not on_sale_c.exist():
             resp.result_code = SellCreatureResultCode.Value(
                 "SELL_TARGET_NOT_EXIST")
             return self.resp(resp)
         player = self.parent.player
         active_creatures = player.get_active_creatures()
-        if on_sale_c.c_id in active_creatures:
+        if on_sale_c.cid in active_creatures:
             resp.result_code = SellCreatureResultCode.Value(
                 "SELL_TARGET_IN_USE")
             return self.resp(resp)
@@ -415,12 +480,15 @@ class Game(ChildActor):
         player.coins += sale_price
         resp.coins = sale_price
 
+        event_data['creature'] = on_sale_c.get_stats_data()
+        event_data['coins'] = sale_price
         # TODO - delete & save player in one transaction
         player.store()
         on_sale_c.delete()
         log.info("Player(%s) sold creature(id:%s, slug:%s) earned %s coins" %
-                 (player_id, on_sale_c.c_id, on_sale_c.slug, sale_price))
+                 (player_id, on_sale_c.cid, on_sale_c.slug, sale_price))
 
+        self.send_event(DeltaSellCreature, event_data, player)
         resp.result_code = SellCreatureResultCode.Value("SOLD_SUCCESS")
         return self.resp(resp)
 
@@ -428,6 +496,10 @@ class Game(ChildActor):
                            proto.ResultCode.Value("INVALID_SESSION"))
     def GachaShake(self, msg):
         rep = proto.GachaShakeRep()
+        event_data = {
+            'player':{'session': self.parent.session_id,
+                      'id': self.parent.pid},
+        }
         data = GameRule.gacha(msg.tree_slug)
         assign_value(rep.egg, data)
 
@@ -441,7 +513,8 @@ class Game(ChildActor):
                              plusLuck=c_data.get('plusLuck', 0),
                     )
         c.store()
-
+        event_data['creature'] = c.get_stats_data()
+        self.send_event(DeltaGacha, event_data)
         rep.result_code = proto.ResultCode.Value("SUCCESS")
         return self.resp(rep)
 
@@ -449,6 +522,10 @@ class Game(ChildActor):
         "ADD_ENERGY_INVALID_SESSION"))
     def AddEnergy(self, msg):
         resp = AddEnergyRep()
+        event_data = {
+            'player':{'session': self.parent.session_id,
+                      'id': self.parent.pid},
+        }
         player = self.parent.player
         consume_gems = GameRule.energy_consume_gems
         if player.gems < consume_gems:
@@ -460,6 +537,8 @@ class Game(ChildActor):
         player.store()
         log.info("Player(%s) consume %s gems to buy %s energy" %
                  (player.id, consume_gems, player.get_max_energy()))
+        event_data['gems_cost'] = consume_gems
+        self.send_event(DeltaAddEnergy, event_data, player)
         resp.result_code = AddEnergyResultCode.Value("ADD_ENERGY_SUCCESS")
         return self.resp(resp)
 

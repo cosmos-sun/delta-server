@@ -1,9 +1,10 @@
 import simplejson
 from dal.base import *
 from models.player import Player, PassedDungeons
-from models.content import GameRule, assign_value
+from models.content import GameRule
 from models.creature import CreatureInstance
 from utils import protocol_pb2 as proto
+from utils.misc import assign_value
 
 
 class BattleReward(Base):
@@ -19,6 +20,7 @@ class BattleReward(Base):
     _dungeon_eggs = ListAttr(TextAttr())
     progress = IntAttr()
     dungeon_slug = TextAttr()
+    key = LongAttr()
 
     def add_egg(self, egg, egg_data, speed=None, dungeon=False):
         assign_value(egg, egg_data)
@@ -51,7 +53,7 @@ class BattleReward(Base):
         self.drop_egg(droppers, config, rep, repeated=repeated, speed=speed)
 
     def drop_luck_egg(self, dropper, configs, pid, leader_id, rep):
-        luck = CreatureInstance(c_id=leader_id, player_id=pid).load().plusLuck or 0
+        luck = CreatureInstance(cid=leader_id, player_id=pid).load().plusLuck or 0
         if not GameRule.battle_drop_luck_egg(luck): return
         self.drop_clearance_egg(dropper, configs, rep)
 
@@ -79,6 +81,7 @@ class BattleReward(Base):
                 break
 
     def pay(self, speed_turns):
+        pay_data = {'drops':[]}
         player = Player(id=self.player_id).load()
         passed_dungeons = PassedDungeons(player_id=self.player_id).load()
         if not passed_dungeons.slugs: passed_dungeons.slugs = []
@@ -87,6 +90,7 @@ class BattleReward(Base):
             passed_dungeons.store()
             self.eggs.extend(self._dungeon_eggs)
         coins = self.coins
+        gems = 0
         self.calc_speed_eggs(speed_turns)
         for egg in self.eggs:
             egg = simplejson.loads(egg)
@@ -101,13 +105,23 @@ class BattleReward(Base):
                                               plusLuck=c_data.get('plusLuck', 0),
                     )
                 c.store()
+                pay_data['drops'].append({'type': egg['type'], 'slug': c_data['slug']})
             elif egg['type'] == GameRule.MATERIAL_EGG:
                 m = egg.get('material')
                 setattr(player, m, getattr(player, m) + 1)
+                pay_data['drops'].append({'type': egg['type'], 'slug': m})
             elif egg['type'] == GameRule.COIN_EGG:
                 coins += egg.get('coins')
+            elif egg['type'] == GameRule.GEM_EGG:
+                gems += egg.get('gems')
         player.set_progress(self.progress)
         player.add_xp(self.xp)
         player.coins += coins
+        player.gems += gems
+
+        pay_data['xp'] = self.xp
+        pay_data['coins'] = self.coins
+        pay_data['gems'] = gems
 
         player.store()
+        return pay_data, player

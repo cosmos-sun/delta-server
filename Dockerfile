@@ -40,6 +40,8 @@ RUN pip install server-reloader docopt
 RUN apt-get install libzmq-dev
 RUN pip install pyzmq
 
+RUN apt-get install python-nose
+
 ADD . /app
 WORKDIR /app
 EXPOSE 8088
